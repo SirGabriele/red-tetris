@@ -5,3 +5,5 @@ WORKDIR /app/server
 COPY src/server/package*.json ./
 
 RUN npm ci
+
+CMD ["npm", "run", "dev"]

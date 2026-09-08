@@ -15,8 +15,5 @@ services:
 
     working_dir: /app/server
 
-    # Run the server using 'dev' script
-    command: npm run dev
-
 volumes:
   server_node_modules:
