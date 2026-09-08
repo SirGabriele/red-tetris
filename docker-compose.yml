@@ -1,0 +1,13 @@
+services:
+  server:
+    # Base image used for server container
+    image: node:24-bookworm-slim
+    ports:
+      - "3000:3000"
+    # Mount server and shared source code so changes are reflected without rebuilding the image
+    volumes:
+      - ./src/server:/app/server
+      - ./src/shared:/app/shared
+    working_dir: /app/server
+    # Run the server using 'dev' script
+    command: npm run dev
