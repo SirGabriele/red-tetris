@@ -9,3 +9,15 @@ services:
       - ./src/server/node_modules:/app/server/node_modules
     working_dir: /app/server
     command: sh -c "npm ci && npm run dev"
+
+  client:
+    build: ./src/client
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./src/client:/app/client
+      - ./src/shared:/app/shared
+      - ./src/client/node_modules:/app/client/node_modules
+    working_dir: /app/client
+    # Install dependencies and expose the Vite dev server on the network
+    command: sh -c "npm ci && npm run dev -- --host 0.0.0.0"
