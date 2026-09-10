@@ -15,7 +15,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch app.ts",
-    "test": "vitest"
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "fastify": "^5.12.3"
