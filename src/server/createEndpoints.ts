@@ -33,7 +33,7 @@ export function createEndpoints(server: FastifyInstance) {
                     },
                     playerName: {
                         type: 'string',
-                        pattern: '^[a-zA-Z0-9]+$'
+                        pattern: '^[a-zA-Z0-9]{1,50}$'
                     }
                 }
             }
