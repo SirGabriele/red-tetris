@@ -1,0 +1,11 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+
+# Tests
+coverage/
+
+# Logs
+*.log

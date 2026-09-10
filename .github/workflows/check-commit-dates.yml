@@ -1,0 +1,263 @@
+name: Check commit dates
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  check-commit-dates:
+    name: Check commit dates
+    runs-on: ubuntu-latest
+
+    env:
+      TZ: Europe/Paris
+      START_TIME: "08:00"
+      END_TIME: "20:00"
+
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Check commit dates and times
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+
+          echo "=========================================="
+          echo "Vérification des commits"
+          echo "=========================================="
+          echo "Branche cible : ${{ github.base_ref }}"
+          echo "Base SHA       : $BASE_SHA"
+          echo "Head SHA       : $HEAD_SHA"
+          echo "Fuseau horaire : $TZ"
+          echo ""
+
+          declare -A ALLOWED_DATES=(
+
+            # Septembre 2026
+            ["2026-09-01"]=1
+            ["2026-09-02"]=1
+            ["2026-09-03"]=1
+            ["2026-09-04"]=1
+            ["2026-09-07"]=1
+            ["2026-09-08"]=1
+            ["2026-09-09"]=1
+            ["2026-09-10"]=1
+            ["2026-09-11"]=1
+
+            # Octobre 2026
+            ["2026-10-05"]=1
+            ["2026-10-06"]=1
+            ["2026-10-07"]=1
+            ["2026-10-08"]=1
+            ["2026-10-09"]=1
+            ["2026-10-12"]=1
+            ["2026-10-13"]=1
+            ["2026-10-14"]=1
+            ["2026-10-15"]=1
+            ["2026-10-16"]=1
+
+            # Novembre 2026
+            ["2026-11-11"]=1
+            ["2026-11-23"]=1
+            ["2026-11-24"]=1
+            ["2026-11-25"]=1
+            ["2026-11-26"]=1
+            ["2026-11-27"]=1
+
+            # Décembre 2026
+            ["2026-12-14"]=1
+            ["2026-12-15"]=1
+            ["2026-12-16"]=1
+            ["2026-12-17"]=1
+            ["2026-12-18"]=1
+            ["2026-12-25"]=1
+
+            # Janvier 2027
+            ["2027-01-01"]=1
+            ["2027-01-04"]=1
+            ["2027-01-05"]=1
+            ["2027-01-06"]=1
+            ["2027-01-07"]=1
+            ["2027-01-08"]=1
+            ["2027-01-11"]=1
+            ["2027-01-12"]=1
+            ["2027-01-13"]=1
+            ["2027-01-14"]=1
+            ["2027-01-15"]=1
+
+            # Février 2027
+            ["2027-02-01"]=1
+            ["2027-02-02"]=1
+            ["2027-02-03"]=1
+            ["2027-02-04"]=1
+            ["2027-02-05"]=1
+            ["2027-02-08"]=1
+            ["2027-02-09"]=1
+            ["2027-02-10"]=1
+            ["2027-02-11"]=1
+            ["2027-02-12"]=1
+
+            # Mars 2027
+            ["2027-03-08"]=1
+            ["2027-03-09"]=1
+            ["2027-03-10"]=1
+            ["2027-03-11"]=1
+            ["2027-03-12"]=1
+            ["2027-03-15"]=1
+            ["2027-03-16"]=1
+            ["2027-03-17"]=1
+            ["2027-03-18"]=1
+            ["2027-03-19"]=1
+            ["2027-03-29"]=1
+
+            # Avril 2027
+            ["2027-04-05"]=1
+            ["2027-04-06"]=1
+            ["2027-04-07"]=1
+            ["2027-04-08"]=1
+            ["2027-04-09"]=1
+            ["2027-04-26"]=1
+            ["2027-04-27"]=1
+            ["2027-04-28"]=1
+            ["2027-04-29"]=1
+            ["2027-04-30"]=1
+
+            # Mai 2027
+            ["2027-05-06"]=1
+            ["2027-05-07"]=1
+            ["2027-05-10"]=1
+            ["2027-05-11"]=1
+            ["2027-05-12"]=1
+            ["2027-05-13"]=1
+            ["2027-05-14"]=1
+            ["2027-05-17"]=1
+
+            # Juin 2027
+            ["2027-06-07"]=1
+            ["2027-06-08"]=1
+            ["2027-06-09"]=1
+            ["2027-06-10"]=1
+            ["2027-06-11"]=1
+            ["2027-06-14"]=1
+            ["2027-06-15"]=1
+            ["2027-06-16"]=1
+            ["2027-06-17"]=1
+            ["2027-06-18"]=1
+
+            # Juillet 2027
+            ["2027-07-14"]=1
+
+            # Août 2027
+            ["2027-08-23"]=1
+            ["2027-08-24"]=1
+            ["2027-08-25"]=1
+            ["2027-08-26"]=1
+            ["2027-08-27"]=1
+          )
+
+          time_to_minutes() {
+            local time="$1"
+            local hour="${time%%:*}"
+            local minute="${time##*:}"
+
+            echo $((10#$hour * 60 + 10#$minute))
+          }
+
+          START_TIME_MIN=$(time_to_minutes "$START_TIME")
+          END_TIME_MIN=$(time_to_minutes "$END_TIME")
+
+          mapfile -t COMMITS < <(
+            git rev-list "$BASE_SHA..$HEAD_SHA"
+          )
+
+          echo "Nombre de commits à vérifier : ${#COMMITS[@]}"
+          echo ""
+
+          if [ "${#COMMITS[@]}" -eq 0 ]; then
+            echo "✅ Aucun commit à vérifier."
+            exit 0
+          fi
+
+          FAILED=0
+          INVALID_COUNT=0
+
+          for COMMIT in "${COMMITS[@]}"; do
+
+            AUTHOR_DATE=$(git show -s --format='%aI' "$COMMIT")
+            AUTHOR=$(git show -s --format='%an' "$COMMIT")
+            MESSAGE=$(git show -s --format='%s' "$COMMIT")
+
+            COMMIT_DATE=$(date -d "$AUTHOR_DATE" '+%Y-%m-%d')
+            COMMIT_TIME=$(date -d "$AUTHOR_DATE" '+%H:%M')
+            COMMIT_TIME_MIN=$(time_to_minutes "$COMMIT_TIME")
+
+            echo "------------------------------------------"
+            echo "Commit  : ${COMMIT:0:8}"
+            echo "Auteur  : $AUTHOR"
+            echo "Message : $MESSAGE"
+            echo "Date    : $COMMIT_DATE"
+            echo "Heure   : $COMMIT_TIME"
+            echo ""
+
+            VALID=true
+
+            if [[ -z "${ALLOWED_DATES[$COMMIT_DATE]+x}" ]]; then
+              echo "❌ Date non autorisée : $COMMIT_DATE"
+              VALID=false
+            else
+              echo "✅ Date autorisée"
+            fi
+
+            if (( COMMIT_TIME_MIN < START_TIME_MIN ||
+                  COMMIT_TIME_MIN > END_TIME_MIN )); then
+
+              echo "❌ Horaire non autorisé : $COMMIT_TIME"
+              echo "   Créneau autorisé : $START_TIME → $END_TIME"
+
+              VALID=false
+            else
+              echo "✅ Horaire autorisé"
+            fi
+
+            if [[ "$VALID" == false ]]; then
+              FAILED=1
+              INVALID_COUNT=$((INVALID_COUNT + 1))
+
+              echo ""
+              echo "❌ COMMIT INVALIDE"
+            else
+              echo ""
+              echo "✅ COMMIT VALIDE"
+            fi
+
+            echo ""
+
+          done
+
+          echo "=========================================="
+          echo "Résultat"
+          echo "=========================================="
+
+          if [ "$FAILED" -eq 1 ]; then
+            echo ""
+            echo "❌ Pipeline refusé."
+            echo ""
+            echo "$INVALID_COUNT commit(s) ne respectent pas"
+            echo "les dates et/ou horaires autorisés."
+            exit 1
+          fi
+
+          echo ""
+          echo "✅ Tous les commits sont valides."
