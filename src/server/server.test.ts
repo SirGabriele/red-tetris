@@ -52,6 +52,7 @@ describe('server endpoints',    () => {
             it.each([
                 [''],                   // empty name is forbidden
                 ['Vincent.Van.Gogh'],   // non-alphanumerical characters are forbidden
+                ['a'.repeat(51)]    // too long
             ])('playerName is %s', async (playerName) => {
                 const response = await server.inject({
                     method: 'GET',
@@ -62,7 +63,7 @@ describe('server endpoints',    () => {
                     'statusCode': 400,
                     'code': 'FST_ERR_VALIDATION',
                     'error': 'Bad Request',
-                    "message": "params/playerName must match pattern \"^[a-zA-Z0-9]+$\"",
+                    "message": "params/playerName must match pattern \"^[a-zA-Z0-9]{1,50}$\"",
                 });
             });
         });
@@ -87,6 +88,7 @@ describe('server endpoints',    () => {
                 ['VincentVanGogh'],
                 ['VincentVanGogh123'],
                 ['1Vincent2Van3Gogh4'],
+                ['a'.repeat(50)]
             ])('playerName is %s', async (playerName) => {
                 const response = await server.inject({
                     method: 'GET',
