@@ -1,4 +1,4 @@
-import type {RootResponse} from '../../../shared/http/root.dto'
+import type {RootResponse} from '@shared/http/root.dto'
 
 export async function getRoot(): Promise<RootResponse> {
 	const response = await fetch('http://localhost:3000/')

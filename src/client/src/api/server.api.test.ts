@@ -1,7 +1,7 @@
 import {afterEach, beforeEach, describe, expect, it, vi,} from 'vitest'
 
-import {getRoot} from './server.api.ts'
-import type {RootResponse} from '../../../shared/http/root.dto.ts'
+import {getRoot} from '@client/src/api/server.api.ts'
+import type {RootResponse} from '@shared/http/root.dto.ts'
 
 describe('getRoot', () => {
 	const fetchMock = vi.fn<typeof fetch>()

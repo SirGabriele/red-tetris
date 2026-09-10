@@ -1,5 +1,5 @@
 import {useState} from 'react'
-import {getRoot} from './api/server.api'
+import {getRoot} from '@client/src/api/server.api'
 
 function App() {
 	const [message, setMessage] = useState('')
