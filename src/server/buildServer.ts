@@ -1,5 +1,5 @@
 import fastify, {FastifyInstance} from "fastify";
-import {createEndpoints} from "@server/createEndpoints.ts";
+import {registerControllers} from "@server/registerControllers.ts";
 
 /**
  * Builds the server and register routes.
@@ -16,7 +16,7 @@ export function buildServer(options: { enableLogger?: boolean }): FastifyInstanc
     });
 
     // Creates server endpoints
-    createEndpoints(server);
+    registerControllers(server);
 
     return server;
 }
