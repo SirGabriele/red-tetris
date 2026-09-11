@@ -11,6 +11,8 @@
       "@server/*": ["./*"],
       "@shared/*": ["../shared/*"]
     },
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true
   }
 }
