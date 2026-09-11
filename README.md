@@ -15,7 +15,7 @@ cd src/server && npm install
 ```
 
 ```bash
-docker compose up
+docker compose up -d
 ````
 
 Fiche de route
