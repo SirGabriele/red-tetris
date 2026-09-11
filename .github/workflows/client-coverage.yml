@@ -1,11 +1,14 @@
 name: Client coverage
 
 on:
+  push:
+    branches:
+      - develop
+      - main
   pull_request:
     branches:
       - develop
       - main
-      - TESTCI
 
 jobs:
   client-coverage:
