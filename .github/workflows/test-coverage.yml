@@ -1,4 +1,4 @@
-name: Client coverage
+name: Test coverage
 
 on:
   push:
