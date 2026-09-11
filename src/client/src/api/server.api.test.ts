@@ -1,7 +1,7 @@
 import {afterEach, beforeEach, describe, expect, it, vi,} from 'vitest'
 
 import {getRoot} from '@client/src/api/server.api.ts'
-import type {RootResponse} from '@shared/http/root.dto.ts'
+import type {RootDto} from '@shared/http/dto/root.dto.ts'
 
 describe('getRoot', () => {
 	const fetchMock = vi.fn<typeof fetch>()
@@ -16,7 +16,7 @@ describe('getRoot', () => {
 	})
 
 	it('should return backend response when request succeeds', async () => {
-		const mockResponse: RootResponse = {
+		const mockResponse: RootDto = {
 			message: 'Hello from server',
 		}
 

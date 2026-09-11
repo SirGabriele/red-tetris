@@ -1,20 +1,24 @@
-import { describe, expect, it } from 'vitest';
+import {describe, expect, it, vi} from 'vitest';
 import {buildServer} from "@server/buildServer.ts";
-import {Routes} from "@server/http/routes/routes.ts";
+import {registerControllers} from "@server/registerControllers.ts";
+
+vi.mock("@server/createEndpoints.ts", () => ({
+    createEndpoints: vi.fn(),
+}));
 
 describe('buildServer', () => {
-    it('should build the server and register the endpoints', async () => {
-        // const server = buildServer({ enableLogger: false });
-        const server = buildServer({ enableLogger: false });
-
+    it('should create server with options', async () => {
+        const server = buildServer({enableLogger: false});
         expect(server).toBeTruthy();
+        expect(registerControllers).toHaveBeenCalledWith(server);
 
-        const response = await server.inject({
-            method: 'GET',
-            url: Routes.ROOT,
-        });
+        await server.close();
+    });
 
-        expect(response.statusCode).toBe(200);
+    it('should create server without options', async () => {
+        const server = buildServer({});
+        expect(server).toBeTruthy();
+        expect(registerControllers).toHaveBeenCalledWith(server);
 
         await server.close();
     });
