@@ -3,7 +3,7 @@ import { FastifyInstance } from "fastify";
 import {afterEach, beforeEach, describe, expect, it } from "vitest";
 import {buildServer} from "@server/buildServer.ts";
 
-describe('buildServer', () => {
+describe('registerControllers', () => {
     let server: FastifyInstance;
 
     beforeEach(() => {
