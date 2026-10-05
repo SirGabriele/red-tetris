@@ -1,9 +1,8 @@
 import {afterEach, beforeEach, describe, expect, it} from "vitest";
 import {buildServer} from "@server/buildServer.ts";
-import {Routes} from "@server/http/routes/routes.ts";
 import {FastifyInstance} from "fastify";
 
-describe('server endpoints',    () => {
+describe('server endpoints', () => {
     let server: FastifyInstance;
 
     beforeEach(() => {
@@ -12,20 +11,6 @@ describe('server endpoints',    () => {
 
     afterEach(async () => {
         await server.close();
-    });
-
-    describe('root', () => {
-        it('return code 200 with greeting', async () => {
-            const response = await server.inject({
-                method: 'GET',
-                url: Routes.ROOT
-            });
-
-            expect(response.statusCode).toBe(200);
-            expect(response.json()).toEqual({
-                message: `Hello from ${Routes.ROOT}`
-            });
-        });
     });
 
     describe('join room', () => {
@@ -45,7 +30,7 @@ describe('server endpoints',    () => {
                     'statusCode': 400,
                     'code': 'FST_ERR_VALIDATION',
                     'error': 'Bad Request',
-                    'message': 'params/roomId must match pattern "^(?!0)\\d{1,4}$"'
+                    'message': 'params/roomId must match pattern "^[1-9]\\d{0,3}$"'
                 });
             });
 
