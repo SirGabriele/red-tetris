@@ -1,12 +1,13 @@
 import fastify, {FastifyInstance} from "fastify";
 import {registerControllers} from "@server/registerControllers.ts";
+import cors from '@fastify/cors'
 
 /**
  * Builds the server and register routes.
  *
  * @param options Server options.
  */
-export function buildServer(options: { enableLogger?: boolean }): FastifyInstance {
+export async function buildServer(options: { enableLogger?: boolean }): Promise<FastifyInstance> {
     const server: FastifyInstance = fastify({
         logger: options?.enableLogger ?? {
             transport: {
@@ -14,6 +15,10 @@ export function buildServer(options: { enableLogger?: boolean }): FastifyInstanc
             }
         }
     });
+
+    await server.register(cors, {
+        origin: "http://localhost:5173"
+    })
 
     // Creates server endpoints
     registerControllers(server);
