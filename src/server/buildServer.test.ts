@@ -2,8 +2,8 @@ import {describe, expect, it, vi} from 'vitest';
 import {buildServer} from "@server/buildServer.ts";
 import {registerControllers} from "@server/registerControllers.ts";
 
-vi.mock("@server/createEndpoints.ts", () => ({
-    createEndpoints: vi.fn(),
+vi.mock("@server/registerControllers.ts", () => ({
+    registerControllers: vi.fn(),
 }));
 
 describe('buildServer', () => {
