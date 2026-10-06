@@ -1,30 +1,17 @@
-import {useState} from 'react'
-import {getRoot} from '@client/src/api/server.api'
+import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom'
+
+import HomePage from '@client/src/pages/HomePage'
 
 function App() {
-	const [message, setMessage] = useState('')
-
-	const callBackend = async () => {
-		try {
-			const response = await getRoot()
-			setMessage(response.message)
-		} catch (error) {
-			console.error(error)
-			setMessage('Error while calling backend')
-		}
-	}
-
 	return (
-		<main className="flex min-h-screen flex-col items-center justify-center gap-4">
-			<button
-				onClick={callBackend}
-				className="rounded bg-red-600 px-4 py-2 text-white"
-			>
-				Call backend
-			</button>
+		<BrowserRouter>
+			<Routes>
+				<Route path="/" element={<HomePage/>}/>
+				{/*<Route path="/game" element={<GamePage/>}/>*/}
 
-			{message && <p>{message}</p>}
-		</main>
+				<Route path="*" element={<Navigate to="/" replace/>}/>
+			</Routes>
+		</BrowserRouter>
 	)
 }
 
