@@ -6,21 +6,20 @@ import HomePage from "@client/src/pages/HomePage.tsx";
 import GamePage from "@client/src/pages/GamePage.tsx";
 
 
-function App() {
-	return (
-		<BrowserRouter>
-			<Routes>
-				<Route element={<Layout/>}>
-					<Route path="/" element={<HomePage/>}/>
-					<Route path="/game" element={<GamePage/>}/>
-					<Route path="/test1" element={<Test1/>}/>
-					<Route path="/test2" element={<Test2/>}/>
+export default function App() {
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route element={<Layout/>}>
+                    <Route path="/" element={<HomePage/>}/>
+                    <Route path="/game" element={<GamePage/>}/>
+                    <Route path="/test1" element={<Test1/>}/>
+                    <Route path="/test2" element={<Test2/>}/>
+                    <Route path="/scoreboard" element={<Test2/>}/>
 
-					<Route path="*" element={<Navigate to="/" replace/>}/>
-				</Route>
-			</Routes>
-		</BrowserRouter>
-	)
+                    <Route path="*" element={<Navigate to="/" replace/>}/>
+                </Route>
+            </Routes>
+        </BrowserRouter>
+    )
 }
-
-export default App

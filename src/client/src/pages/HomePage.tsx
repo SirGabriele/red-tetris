@@ -1,27 +1,27 @@
 import {useNavigate} from 'react-router-dom'
 
 export default function HomePage() {
-	const navigate = useNavigate()
+    const navigate = useNavigate()
 
-	return (
-		<main className="min-h-screen">
-			<section className="mx-auto flex min-h-[75vh] max-w-7xl items-center justify-between px-8">
-				<div className="flex max-w-xl flex-col items-start">
-					<p className="mb-6 font-mono tracking-[0.25em] text-gray-400">
-						SIMPLE. TIMELESS. RED.
-					</p>
+    return (
+        <main className="bg-teal-500 flex-1">
+            <section className="mx-auto flex min-h-[75vh] max-w-7xl items-center justify-between px-8">
+                <div className="flex max-w-xl flex-col items-start">
+                    <p className="mb-6 font-mono tracking-[0.25em] text-gray-400">
+                        SIMPLE. TIMELESS. RED.
+                    </p>
 
-					<h1 className="text-left text-7xl font-black">
-						<span className="text-red-500">RED-</span>
-						<span className="text-white">TETRIS</span>
-					</h1>
+                    <h1 className="text-left text-7xl font-black">
+                        <span className="text-red-500">RED-</span>
+                        <span className="text-white">TETRIS</span>
+                    </h1>
 
-					<p className="mt-4 text-xl text-gray-400">
-						The classic game. A bolder look.
-					</p>
+                    <p className="mt-4 text-xl text-gray-400">
+                        The classic game. A bolder look.
+                    </p>
 
-					<button onClick={() => navigate('/game')}
-							className="
+                    <button onClick={() => navigate('/game')}
+                            className="
                             mt-10
                             cursor-pointer
                             rounded-md
@@ -35,11 +35,11 @@ export default function HomePage() {
                             hover:bg-red-400
                             hover:shadow-[0_0_25px_rgba(255,45,45,0.35)]
                         ">
-						Play Now
-					</button>
-				</div>
+                        Play Now
+                    </button>
+                </div>
 
-				<div className="
+                <div className="
                         flex
                         h-[520px]
                         w-[360px]
@@ -54,8 +54,8 @@ export default function HomePage() {
                     <span className="font-mono text-gray-600">
                         Tetris preview
                     </span>
-				</div>
-			</section>
-		</main>
-	)
+                </div>
+            </section>
+        </main>
+    )
 }
