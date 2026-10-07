@@ -1,47 +1,69 @@
-import {cleanup, fireEvent, render, screen, waitFor} from '@testing-library/react'
+import {cleanup, render, screen, waitFor} from '@testing-library/react'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
+import {Outlet} from 'react-router-dom'
+
 import App from '@client/src/App.tsx'
-import * as serverApi from '@client/src/api/server.api.ts'
+import {ROUTES} from "@shared/utils/routesUtils.ts";
+
+vi.mock('@client/src/components/layout/Layout.tsx', () => ({
+    default: () => (
+        <>
+            <div>Layout</div>
+            <Outlet/>
+        </>
+    )
+}))
+
+vi.mock('@client/src/pages/HomePage.tsx', () => ({
+    default: () => <div>Home Page</div>
+}))
+
+vi.mock('@client/src/pages/GamePage.tsx', () => ({
+    default: () => <div>Game Page</div>
+}))
+
+vi.mock('@client/src/pages/ScoreboardPage.tsx', () => ({
+    default: () => <div>Scoreboard Page</div>
+}))
 
 beforeEach(() => {
-	cleanup()
-	vi.restoreAllMocks()
+    cleanup()
+    window.history.pushState({}, '', ROUTES.HOME)
 })
 
 describe('App', () => {
-	it('should display backend response after button click', async () => {
-		vi.spyOn(serverApi, 'getRoot').mockResolvedValue({
-			message: 'Hello from /'
-		})
+    it('should display home page on root route', () => {
+        render(<App/>)
 
-		render(<App/>)
+        expect(screen.getByText('Layout')).toBeInTheDocument()
+        expect(screen.getByText('Home Page')).toBeInTheDocument()
+    })
 
-		fireEvent.click(
-			screen.getByRole('button', {name: 'Call backend'})
-		)
+    it('should display game page on /game', () => {
+        window.history.pushState({}, '', ROUTES.GAME)
 
-		await waitFor(() => {
-			expect(
-				screen.getByText('Hello from /')
-			).toBeInTheDocument()
-		})
-	})
+        render(<App/>)
 
-	it('should display an error message when backend call fails', async () => {
-		vi.spyOn(serverApi, 'getRoot').mockRejectedValue(
-			new Error('Backend unavailable')
-		)
+        expect(screen.getByText('Layout')).toBeInTheDocument()
+        expect(screen.getByText('Game Page')).toBeInTheDocument()
+    })
 
-		render(<App/>)
+    it('should display game page on /scoreboard', () => {
+        window.history.pushState({}, '', ROUTES.SCOREBOARD)
 
-		fireEvent.click(
-			screen.getByRole('button', {name: 'Call backend'})
-		)
+        render(<App/>)
 
-		await waitFor(() => {
-			expect(
-				screen.getByText('Error while calling backend')
-			).toBeInTheDocument()
-		})
-	})
+        expect(screen.getByText('Layout')).toBeInTheDocument()
+        expect(screen.getByText('Scoreboard Page')).toBeInTheDocument()
+    })
+
+    it('should redirect unknown route to home', async () => {
+        window.history.pushState({}, '', '/unknown')
+
+        render(<App/>)
+
+        await waitFor(() => {
+            expect(screen.getByText('Home Page')).toBeInTheDocument()
+        })
+    })
 })
