@@ -1,11 +1,13 @@
 import {Outlet} from "react-router-dom";
-import Header from "@client/src/components/layout/Header.tsx";
+import NavBar from "@client/src/components/NavBar.tsx";
 
 export default function Layout() {
     return (
-        <div className="h-fit min-h-screen bg-red-200">
-            <Header/>
-            <Outlet/>
+        <div className="min-h-screen flex flex-col">
+            <NavBar/>
+            <main className="flex-1">
+                <Outlet/>
+            </main>
         </div>
     )
 }
