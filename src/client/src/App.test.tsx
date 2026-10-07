@@ -3,8 +3,9 @@ import {beforeEach, describe, expect, it, vi} from 'vitest'
 import {Outlet} from 'react-router-dom'
 
 import App from '@client/src/App.tsx'
+import {ROUTES} from "@shared/utils/routesUtils.ts";
 
-vi.mock('@client/src/components/Layout.tsx', () => ({
+vi.mock('@client/src/components/layout/Layout.tsx', () => ({
     default: () => (
         <>
             <div>Layout</div>
@@ -21,17 +22,13 @@ vi.mock('@client/src/pages/GamePage.tsx', () => ({
     default: () => <div>Game Page</div>
 }))
 
-vi.mock('@client/src/components/Test1.tsx', () => ({
-    default: () => <div>Test 1</div>
-}))
-
-vi.mock('@client/src/components/Test2.tsx', () => ({
-    default: () => <div>Test 2</div>
+vi.mock('@client/src/pages/ScoreboardPage.tsx', () => ({
+    default: () => <div>Scoreboard Page</div>
 }))
 
 beforeEach(() => {
     cleanup()
-    window.history.pushState({}, '', '/')
+    window.history.pushState({}, '', ROUTES.HOME)
 })
 
 describe('App', () => {
@@ -43,7 +40,7 @@ describe('App', () => {
     })
 
     it('should display game page on /game', () => {
-        window.history.pushState({}, '', '/game')
+        window.history.pushState({}, '', ROUTES.GAME)
 
         render(<App/>)
 
@@ -51,16 +48,13 @@ describe('App', () => {
         expect(screen.getByText('Game Page')).toBeInTheDocument()
     })
 
-    it.each([
-        ['/test1', 'Test 1'],
-        ['/test2', 'Test 2'],
-        ['/scoreboard', 'Test 2']
-    ])('should display correct page on %s', (route, content) => {
-        window.history.pushState({}, '', route)
+    it('should display game page on /scoreboard', () => {
+        window.history.pushState({}, '', ROUTES.SCOREBOARD)
 
         render(<App/>)
 
-        expect(screen.getByText(content)).toBeInTheDocument()
+        expect(screen.getByText('Layout')).toBeInTheDocument()
+        expect(screen.getByText('Scoreboard Page')).toBeInTheDocument()
     })
 
     it('should redirect unknown route to home', async () => {
