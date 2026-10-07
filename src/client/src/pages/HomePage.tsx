@@ -4,7 +4,7 @@ export default function HomePage() {
     const navigate = useNavigate()
 
     return (
-        <section className="mx-auto flex min-h-screen max-w-7xl items-center justify-between px-8">
+        <section className="mx-auto flex w-full max-w-7xl flex-1 items-center justify-between px-8">
             <div className="flex max-w-xl flex-col items-start">
                 <p className="mb-6 font-mono tracking-[0.25em] text-gray-400">
                     PIMPLE. RIMLESS. TED.
