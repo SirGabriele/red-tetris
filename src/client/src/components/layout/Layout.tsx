@@ -3,7 +3,7 @@ import NavBar from '@client/src/components/layout/NavBar.tsx'
 
 export default function Layout() {
     return (
-        <div className="flex min-h-screen flex-col">
+        <div className="flex h-screen flex-col">
             <NavBar/>
 
             <main className="flex flex-1">
