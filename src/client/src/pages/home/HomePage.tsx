@@ -12,8 +12,7 @@ export default function HomePage() {
 
                 <h1 className="text-left text-7xl font-black">
                     <span className="text-(--accent)">RED-</span>
-                    {/*TODO enlever ce classname*/}
-                    <span className="text-white">TETRIS</span>
+                    <span>TETRIS</span>
                 </h1>
 
                 <button onClick={() => navigate('/game')}
