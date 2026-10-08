@@ -17,7 +17,7 @@ export default function GamePage() {
     }
 
     return (
-        <div>
+        <div className="flex flex-1">
             {isConnected ? <GameComponent/> : <RegisterForm onSubmit={submit}/>}
         </div>
     )
