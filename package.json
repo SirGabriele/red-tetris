@@ -4,7 +4,7 @@
     "test:coverage": "npm run test:coverage:client && npm run test:coverage:server",
     "test:client": "npm --prefix src/client test",
     "test:server": "npm --prefix src/server test",
-    "test:client:coverage": "npm --prefix src/client run test:coverage",
-    "test:server:coverage": "npm --prefix src/server run test:coverage"
+    "test:coverage:client": "npm --prefix src/client run test:coverage",
+    "test:coverage:server": "npm --prefix src/server run test:coverage"
   }
 }
