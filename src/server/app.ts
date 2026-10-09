@@ -1,14 +1,14 @@
 import {FastifyInstance} from "fastify";
-import {ServerConfig} from "@server/server.config.ts";
+import {SERVER_CONFIG} from "@server/server.config.ts";
 import {buildServer} from "@server/buildServer.ts";
 
-const server: FastifyInstance = buildServer({ enableLogger: true });
+const server: FastifyInstance = await buildServer({ enableLogger: true });
 
 const start = async () => {
     try {
         await server.listen({
-            port: ServerConfig.port,
-            host: ServerConfig.host
+            port: SERVER_CONFIG.PORT,
+            host: SERVER_CONFIG.HOST
         });
     } catch (error) {
         console.error(error);

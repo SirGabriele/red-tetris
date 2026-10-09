@@ -15,7 +15,13 @@ export default defineConfig({
                 '**/*config.ts',
                 '**/*.dto.ts'
             ],
-            reporter: ['html', 'text']
+            reporter: ['html', 'text'],
+            thresholds: {
+                statements: 70,
+                functions: 70,
+                lines: 70,
+                branches: 50,
+            }
         }
     }
 });

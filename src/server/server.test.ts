@@ -5,8 +5,8 @@ import {FastifyInstance} from "fastify";
 describe('server endpoints', () => {
     let server: FastifyInstance;
 
-    beforeEach(() => {
-        server = buildServer({enableLogger: false});
+    beforeEach(async () => {
+        server = await buildServer({enableLogger: false});
     });
 
     afterEach(async () => {

@@ -1,3 +1,5 @@
-export const ROOM_ID_PATTERN = '^[1-9]\\d{0,3}$';
+export const ROOM_ID_PATTERN_STRING = '^[1-9]\\d{0,3}$';
+export const ROOM_ID_PATTERN_REGEXP = new RegExp(ROOM_ID_PATTERN_STRING);
 
-export const PLAYER_NAME_PATTERN = '^[a-zA-Z0-9]{1,50}$';
+export const PLAYER_NAME_PATTERN_STRING = '^[a-zA-Z0-9]{1,50}$';
+export const PLAYER_NAME_PATTERN_REGEXP = new RegExp(PLAYER_NAME_PATTERN_STRING);

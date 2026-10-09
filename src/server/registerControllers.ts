@@ -1,7 +1,7 @@
 import {FastifyInstance} from "fastify";
 import {Routes} from "@server/http/routes/routes.ts";
 import {JoinRoomDto} from "@shared/http/dto/joinRoom.dto.ts";
-import {PLAYER_NAME_PATTERN, ROOM_ID_PATTERN} from "@shared/utils/regex.utils.ts";
+import {PLAYER_NAME_PATTERN_STRING, ROOM_ID_PATTERN_STRING} from "@shared/utils/regex.utils.ts";
 import {rootController} from "@server/controllers/root.controller.ts";
 import {joinRoomController} from "@server/controllers/joinRoom.controller.ts";
 import {JoinRoomRequest} from "@server/dto/joinRoom/joinRoom.request.dto.ts";
@@ -29,11 +29,11 @@ export function registerControllers(server: FastifyInstance) {
                 properties: {
                     roomId: {
                         type: 'string',
-                        pattern: ROOM_ID_PATTERN
+                        pattern: ROOM_ID_PATTERN_STRING
                     },
                     playerName: {
                         type: 'string',
-                        pattern: PLAYER_NAME_PATTERN
+                        pattern: PLAYER_NAME_PATTERN_STRING
                     }
                 }
             }

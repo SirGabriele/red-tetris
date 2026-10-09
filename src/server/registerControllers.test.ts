@@ -6,8 +6,8 @@ import {buildServer} from "@server/buildServer.ts";
 describe('registerControllers', () => {
     let server: FastifyInstance;
 
-    beforeEach(() => {
-        server = buildServer({enableLogger: false});
+    beforeEach(async () => {
+        server = await buildServer({enableLogger: false});
     });
 
     afterEach(async () => {
