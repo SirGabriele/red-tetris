@@ -8,7 +8,7 @@ type RoomIDFormFieldProps = {
 export default function RoomIDFormField({ setRoomID, validateForm }: RoomIDFormFieldProps) {
     return (
         <div>
-            <label htmlFor="name" className="mb-2 block text-sm text-(--text)">
+            <label htmlFor="roomID" className="mb-2 block text-sm text-(--text)">
                 Room&nbsp;ID
             </label>
 
@@ -28,6 +28,7 @@ export default function RoomIDFormField({ setRoomID, validateForm }: RoomIDFormF
                     transition
                     [&::-webkit-inner-spin-button]:appearance-none
                 "
+                data-testid="room-id-form-field"
                 onChange={e => setRoomID(e.target.value)}
                 onBlur={validateForm}
             />

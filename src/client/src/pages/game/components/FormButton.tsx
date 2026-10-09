@@ -19,6 +19,7 @@ export default function FormButton() {
                 transition
                 hover:bg-(--accent-hover)
                 hover:shadow-[0_0_25px_var(--accent-glow)]"
+            data-testid="submit-button-form-field"
         >
             {isLoading ? 'Loading...' : 'Play'}
         </button>

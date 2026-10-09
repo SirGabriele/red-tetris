@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {PLAYER_NAME_PATTERN_REGEXP, ROOM_ID_PATTERN_REGEXP} from "@shared/utils/regex.utils.ts";
 import FormButton from "@client/src/pages/game/components/FormButton.tsx";
-import NameFormField from "@client/src/pages/game/components/NameFormField.tsx";
+import PlayerNameFormField from "@client/src/pages/game/components/PlayerNameFormField.tsx";
 import RoomIDFormField from "@client/src/pages/game/components/RoomIDFormField.tsx";
 import FormErrorsDisplay from "@client/src/pages/game/components/FormErrorsDisplay.tsx";
 
@@ -65,7 +65,7 @@ export default function RegisterForm({ onSubmit }: RegisterFormProps) {
                     </h1>
                 </div>
 
-                <NameFormField setPlayerName={setPlayerName} validateForm={validateForm}/>
+                <PlayerNameFormField setPlayerName={setPlayerName} validateForm={validateForm}/>
                 <RoomIDFormField setRoomID={setRoomID} validateForm={validateForm}/>
                 <FormErrorsDisplay errors={errors}/>
                 <FormButton/>

@@ -5,7 +5,7 @@ type FormFieldProps = {
     validateForm: () => boolean;
 };
 
-export default function NameFormField({ setPlayerName, validateForm }: FormFieldProps) {
+export default function PlayerNameFormField({ setPlayerName, validateForm }: FormFieldProps) {
     return (
         <div>
             <label htmlFor="name" className="mb-2 block text-sm text-(--text)">
@@ -27,6 +27,7 @@ export default function NameFormField({ setPlayerName, validateForm }: FormField
                     outline-none
                     transition
                 "
+                data-testid="player-name-form-field"
                 onChange={e => setPlayerName(e.target.value)}
                 onBlur={validateForm}
             />
