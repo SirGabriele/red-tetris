@@ -13,7 +13,7 @@ export default function navBarLink({ to, children, end = false }: NavBarLinkProp
             {({ isActive }) => (
                 <>
                     {children}
-                    {isActive && <span className="absolute right-3 bottom-0 left-3 h-0.5 bg-red-500"/>}
+                    {isActive && <span className="absolute right-3 bottom-0 left-3 h-0.5 bg-(--accent)"/>}
                 </>
             )}
         </NavLink>

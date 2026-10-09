@@ -18,7 +18,7 @@ export default function FormButton() {
                 text-white
                 transition
                 hover:bg-(--accent-hover)
-                hover:shadow-[0_0_25px_var(--accent-glow))]"
+                hover:shadow-[0_0_25px_var(--accent-glow)]"
         >
             {isLoading ? 'Loading...' : 'Play'}
         </button>

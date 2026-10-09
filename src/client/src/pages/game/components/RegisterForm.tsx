@@ -53,7 +53,7 @@ export default function RegisterForm({ onSubmit }: RegisterFormProps) {
     }
 
     return (
-        <div className="mx-auto flex min-h-screen max-w-xl items-center px-6">
+        <div className="mx-auto flex w-full flex-1 max-w-xl items-center px-6">
             <form className="flex flex-col gap-2 w-full" action={submit}>
                 <div>
                     <p className="mb-3 font-mono text-sm tracking-[0.3em] text-(--text-muted)">
