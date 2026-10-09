@@ -19,8 +19,8 @@ export default function RoomIDFormField({ setRoomID, validateForm }: RoomIDFormF
                 placeholder="1, 2, 3..."
                 required
                 className="w-full
-                    border border-(--accent)/40
-                    focus:border-(--accent) focus:shadow-(--shadow-red-soft)
+                    border border-(--accent)/40 focus:border-(--accent)
+                    focus:shadow-(--shadow-red-soft)
                     bg-(--bg-secondary)
                     px-4 py-3
                     placeholder:text-(--text-muted)

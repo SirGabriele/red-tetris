@@ -19,8 +19,8 @@ export default function PlayerNameFormField({ setPlayerName, validateForm }: For
                 placeholder="Jane, John..."
                 required
                 className="w-full
-                    border border-(--accent)/40
-                    focus:border-(--accent) focus:shadow-(--shadow-red-soft)
+                    border border-(--accent)/40 focus:border-(--accent)
+                    focus:shadow-(--shadow-red-soft)
                     bg-(--bg-secondary)
                     px-4 py-3
                     placeholder:text-(--text-muted)
