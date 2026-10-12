@@ -1,9 +1,9 @@
 import {cleanup, render, screen, waitFor} from '@testing-library/react'
-import {beforeEach, describe, expect, it, vi} from 'vitest'
 import {Outlet} from 'react-router-dom'
+import {beforeEach, describe, expect, it, vi} from 'vitest'
 
 import App from '@client/src/App.tsx'
-import {ROUTES} from "@shared/utils/routesUtils.ts";
+import {ROUTES} from '@shared/utils/routesUtils.ts'
 
 vi.mock('@client/src/components/layout/Layout.tsx', () => ({
     default: () => (
@@ -14,15 +14,15 @@ vi.mock('@client/src/components/layout/Layout.tsx', () => ({
     )
 }))
 
-vi.mock('@client/src/pages/HomePage.tsx', () => ({
+vi.mock('@client/src/pages/home/HomePage.tsx', () => ({
     default: () => <div>Home Page</div>
 }))
 
-vi.mock('@client/src/pages/GamePage.tsx', () => ({
+vi.mock('@client/src/pages/game/GamePage.tsx', () => ({
     default: () => <div>Game Page</div>
 }))
 
-vi.mock('@client/src/pages/ScoreboardPage.tsx', () => ({
+vi.mock('@client/src/pages/scoreboard/ScoreboardPage.tsx', () => ({
     default: () => <div>Scoreboard Page</div>
 }))
 
@@ -48,7 +48,7 @@ describe('App', () => {
         expect(screen.getByText('Game Page')).toBeInTheDocument()
     })
 
-    it('should display game page on /scoreboard', () => {
+    it('should display scoreboard page on /scoreboard', () => {
         window.history.pushState({}, '', ROUTES.SCOREBOARD)
 
         render(<App/>)
