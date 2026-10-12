@@ -1,9 +1,22 @@
 import type {FastifyInstance, FastifyRequest} from 'fastify'
 
 import {Routes} from '@server/http/routes/routes.ts'
+import type {ScoreboardRequest} from '@server/scoreboard/dto/scoreboard.request.dto.ts'
 import type {ScoreboardDto} from '@shared/http/dto/scoreboard.dto.ts'
 import * as scoreboardService from '@server/scoreboard/scoreboard.service.ts'
-import {ScoreboardRequest} from "@server/scoreboard/dto/scoreboard.request.dto.ts";
+
+const scoreboardSchema = {
+    params: {
+        type: 'object',
+        required: ['pageNumber'],
+        properties: {
+            pageNumber: {
+                type: 'integer',
+                minimum: 1
+            }
+        }
+    }
+}
 
 /**
  * Registers routes related to the scoreboard functionality on the provided Fastify server instance.
@@ -12,7 +25,11 @@ import {ScoreboardRequest} from "@server/scoreboard/dto/scoreboard.request.dto.t
  * @return {Promise<void>} A promise that resolves when the scoreboard routes are successfully registered.
  */
 export async function scoreboardController(server: FastifyInstance): Promise<void> {
-    server.get(Routes.SCOREBOARD, getScoreboard)
+    server.get<ScoreboardRequest>(
+        Routes.SCOREBOARD,
+        { schema: scoreboardSchema },
+        getScoreboard
+    )
 }
 
 /**
