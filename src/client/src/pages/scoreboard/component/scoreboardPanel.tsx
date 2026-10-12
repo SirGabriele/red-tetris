@@ -1,6 +1,6 @@
 import type {ScoreboardDto} from '@shared/http/dto/scoreboard.dto.ts'
 import {formatPlayerName} from '@client/src/pages/scoreboard/scoreboardNameFormatter.ts'
-import Pagination from "@client/src/pages/scoreboard/component/Pagination.tsx";
+import Pagination from '@client/src/pages/scoreboard/component/Pagination.tsx'
 
 interface ScoreboardPanelProps {
     title: string
@@ -34,7 +34,7 @@ export default function ScoreboardPanel({
 
                 <div className="flex flex-1 flex-col">
                     {loading
-                        ? Array.from({ length: 10 }).map((_, index) => (
+                        ? Array.from({ length: scoreboard.pageSize }).map((_, index) => (
                             <div
                                 key={index}
                                 className="grid flex-1 grid-cols-[3rem_1fr_auto] items-center border-b
@@ -52,7 +52,7 @@ export default function ScoreboardPanel({
                                     border-(--border) px-6 transition hover:bg-(--accent-bg)"
                             >
                                 <span className="font-mono text-sm text-(--accent-dark)">
-                                    {(scoreboard.currentPage - 1) * 10 + index + 1}.
+                                    {(scoreboard.currentPage - 1) * scoreboard.pageSize + index + 1}.
                                 </span>
 
                                 <span className="whitespace-pre font-mono font-bold tracking-[0.2em] text-(--text-h)">

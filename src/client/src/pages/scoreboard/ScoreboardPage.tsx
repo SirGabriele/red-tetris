@@ -1,13 +1,14 @@
 import {useEffect, useState} from 'react'
 
-import type {ScoreboardDto} from '@shared/http/dto/scoreboard.dto.ts'
+import {SCOREBOARD_PAGE_SIZE, type ScoreboardDto} from '@shared/http/dto/scoreboard.dto.ts'
 import * as scoreResource from '@client/src/pages/scoreboard/scoreResource.ts'
-import ScoreboardPanel from "@client/src/pages/scoreboard/component/scoreboardPanel.tsx";
+import ScoreboardPanel from '@client/src/pages/scoreboard/component/scoreboardPanel.tsx'
 
 const EMPTY_SCOREBOARD: ScoreboardDto = {
     scores: [],
     currentPage: 1,
-    totalPages: 1
+    totalPages: 1,
+    pageSize: SCOREBOARD_PAGE_SIZE
 }
 
 export default function ScoreboardPage() {
@@ -59,11 +60,19 @@ export default function ScoreboardPage() {
                     )
                     : (
                         <>
-                            <ScoreboardPanel title="TODAY'S GREATEST" scoreboard={scoreboard} loading={loading}
-                                             onPageChange={handlePageChange}/>
+                            <ScoreboardPanel
+                                title="TODAY'S GREATEST"
+                                scoreboard={scoreboard}
+                                loading={true}
+                                onPageChange={handlePageChange}
+                            />
 
-                            <ScoreboardPanel title="ALL TIMES GREATEST" scoreboard={scoreboard} loading={true}
-                                             onPageChange={handlePageChange}/>
+                            <ScoreboardPanel
+                                title="ALL TIMES GREATEST"
+                                scoreboard={scoreboard}
+                                loading={loading}
+                                onPageChange={handlePageChange}
+                            />
                         </>
                     )
                 }

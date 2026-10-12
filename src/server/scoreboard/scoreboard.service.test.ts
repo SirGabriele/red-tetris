@@ -1,12 +1,12 @@
 import {beforeEach, describe, expect, it, vi} from 'vitest'
+
+import {SCOREBOARD_PAGE_SIZE} from '@shared/http/dto/scoreboard.dto.ts'
 import * as scoreboardRepository from '@server/scoreboard/scores/score.repository.ts'
 import {getScoreboard} from '@server/scoreboard/scoreboard.service.ts'
 
 vi.mock('@server/scoreboard/scores/score.repository.ts', () => ({
     findScores: vi.fn(),
-    countScores: vi.fn(),
-    findScoresByPlayerName: vi.fn(),
-    countScoresByPlayerName: vi.fn()
+    countScores: vi.fn()
 }))
 
 describe('scoreboardService', () => {
@@ -31,7 +31,7 @@ describe('scoreboardService', () => {
 
             const result = getScoreboard(1)
 
-            expect(scoreboardRepository.findScores).toHaveBeenCalledWith(10, 0)
+            expect(scoreboardRepository.findScores).toHaveBeenCalledWith(SCOREBOARD_PAGE_SIZE, 0)
             expect(scoreboardRepository.countScores).toHaveBeenCalledOnce()
 
             expect(result).toEqual({
@@ -46,7 +46,8 @@ describe('scoreboardService', () => {
                     }
                 ],
                 currentPage: 1,
-                totalPages: 3
+                totalPages: 3,
+                pageSize: SCOREBOARD_PAGE_SIZE
             })
         })
 
@@ -56,12 +57,16 @@ describe('scoreboardService', () => {
 
             const result = getScoreboard(2)
 
-            expect(scoreboardRepository.findScores).toHaveBeenCalledWith(10, 10)
+            expect(scoreboardRepository.findScores).toHaveBeenCalledWith(
+                SCOREBOARD_PAGE_SIZE,
+                SCOREBOARD_PAGE_SIZE
+            )
 
             expect(result).toEqual({
                 scores: [],
                 currentPage: 2,
-                totalPages: 3
+                totalPages: 3,
+                pageSize: SCOREBOARD_PAGE_SIZE
             })
         })
     })

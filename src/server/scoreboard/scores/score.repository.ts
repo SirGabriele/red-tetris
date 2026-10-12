@@ -4,7 +4,7 @@ export function findScores(limit: number, offset: number) {
     const statement = database.prepare(`
         SELECT player_name, score
         FROM score
-        ORDER BY score DESC LIMIT ?
+        ORDER BY score DESC, id ASC DESC LIMIT ?
         OFFSET ?
     `)
 
