@@ -1,4 +1,4 @@
-import { defineConfig } from "vitest/config";
+import {defineConfig} from "vitest/config";
 
 export default defineConfig({
     resolve: {
@@ -13,7 +13,8 @@ export default defineConfig({
                 '**/*.test.ts',
                 'coverage/**',
                 '**/*config.ts',
-                '**/*.dto.ts'
+                '**/*.dto.ts',
+                'database/setup-database.ts',
             ],
             reporter: ['html', 'text'],
             thresholds: {

@@ -5,11 +5,18 @@ import {PLAYER_NAME_PATTERN_STRING, ROOM_ID_PATTERN_STRING} from "@shared/utils/
 import {rootController} from "@server/controllers/root.controller.ts";
 import {joinRoomController} from "@server/controllers/joinRoom.controller.ts";
 import {JoinRoomRequest} from "@server/dto/joinRoom/joinRoom.request.dto.ts";
+import {scoreboardController} from "@server/scoreboard/scoreboard.controller.ts";
 
 /**
  * Creates all server endpoints.
  */
 export function registerControllers(server: FastifyInstance) {
+
+    /**
+     * Link to dto controller.
+     */
+    server.register(scoreboardController)
+
     /**
      * Base root endpoint.
      */
