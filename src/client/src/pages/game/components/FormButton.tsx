@@ -1,4 +1,5 @@
 import {useFormStatus} from "react-dom";
+import {Spinner} from "@client/src/components/Spinner.tsx";
 
 export default function FormButton() {
     const data = useFormStatus();
@@ -21,20 +22,5 @@ export default function FormButton() {
         >
             {isLoading && (<Spinner/>)}<span>{isLoading ? 'Loading...' : 'Play'}</span>
         </button>
-    )
-}
-
-function Spinner() {
-    return (
-        <span
-            aria-hidden="true"
-            className="h-4
-                    w-4
-                    rounded-full
-                    border-2
-                    border-white/30
-                    animate-spin
-                    border-t-white"
-        />
     )
 }
