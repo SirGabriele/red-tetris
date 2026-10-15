@@ -1,5 +1,5 @@
 import {beforeEach, describe, expect, vi, it} from "vitest";
-import {RTServer, RTSocket} from "@server/socket/socket.ts";
+import {RTServer, RTSocket} from "@server/socket/socket.types.ts";
 import {registerAllHandlers} from "@server/socket/registerAllHandlers.ts";
 import {registerJoinRoomHandler} from "@server/socket/handlers/registerJoinRoomHandler.ts";
 import {registerMoveLeftHandler} from "@server/socket/handlers/registerMoveLeftHandler.ts";

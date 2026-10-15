@@ -1,7 +1,7 @@
 import fastify, {FastifyInstance} from "fastify";
 import fastifyStatic from '@fastify/static'
 import {Server} from 'socket.io';
-import {RTServer} from "@server/socket/socket.ts";
+import {RTServer} from "@server/socket/socket.types.ts";
 import {registerAllHandlers} from "@server/socket/registerAllHandlers.ts";
 import {validateConnection} from "@server/socket/middleware/auth.validation.ts";
 import path from "node:path";

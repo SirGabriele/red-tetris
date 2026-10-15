@@ -1,4 +1,4 @@
-import {RTSocket} from "@server/socket/socket.ts";
+import {RTSocket} from "@server/socket/socket.types.ts";
 import {PLAYER_NAME_PATTERN_REGEXP, ROOM_ID_PATTERN_REGEXP} from "@shared/utils/regex.utils.ts";
 import {Socket} from "socket.io";
 

@@ -1,4 +1,4 @@
-import {RTServer, RTSocket} from "@server/socket/socket.ts";
+import {RTServer, RTSocket} from "@server/socket/socket.types.ts";
 import {registerJoinRoomHandler} from "@server/socket/handlers/registerJoinRoomHandler.ts";
 import {registerMoveLeftHandler} from "@server/socket/handlers/registerMoveLeftHandler.ts";
 import {registerRotateHandler} from "@server/socket/handlers/registerRotateHandler.ts";

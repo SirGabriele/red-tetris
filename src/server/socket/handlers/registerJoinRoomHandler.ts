@@ -1,4 +1,4 @@
-import {RTSocket} from "@server/socket/socket.ts";
+import {RTSocket} from "@server/socket/socket.types.ts";
 import {WsChannels} from "@shared/ws/wsChannels.ts";
 
 export function registerJoinRoomHandler(socket: RTSocket) {

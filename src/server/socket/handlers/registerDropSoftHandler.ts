@@ -1,4 +1,4 @@
-import {RTServer, RTSocket} from "@server/socket/socket.ts";
+import {RTServer, RTSocket} from "@server/socket/socket.types.ts";
 import {WsChannels} from "@shared/ws/wsChannels.ts";
 
 export function registerDropSoftHandler(io: RTServer, socket: RTSocket) {
