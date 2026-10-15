@@ -33,6 +33,8 @@ export async function buildServer(options: { enableLogger?: boolean }): Promise<
         }
     });
 
+    server.setNotFoundHandler((_, reply) => {
+        reply.sendFile('index.html')
     })
 
     // Register a middleware that ensures the request contains valid roomID and playerName to allow any connection
