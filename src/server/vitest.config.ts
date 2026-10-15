@@ -12,7 +12,6 @@ export default defineConfig({
             exclude: [
                 '**/*.test.ts',
                 'coverage/**',
-                '**/*config.ts',
                 '**/*.dto.ts'
             ],
             reporter: ['html', 'text'],
