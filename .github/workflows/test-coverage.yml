@@ -40,10 +40,6 @@ jobs:
     name: Server coverage
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: src/server
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -53,10 +49,18 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: src/server/package-lock.json
+          cache-dependency-path: |
+            src/client/package-lock.json
+            src/server/package-lock.json
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Build client static assets
+        run: |
+          cd src/client
+          npm ci
+          npm run build
 
-      - name: Run tests with coverage
-        run: npm run test:coverage
+      - name: Run server tests with coverage
+        run: |
+          cd src/server
+          npm ci
+          npm run test:coverage
