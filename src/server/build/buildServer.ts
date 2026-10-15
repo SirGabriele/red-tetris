@@ -21,8 +21,11 @@ export async function buildServer(options: { enableLogger?: boolean }): Promise<
         }
     });
 
-    await server.register(cors, {
-        origin: "http://localhost:5173"
+    server.register(fastifyStatic, {
+        root: path.resolve(import.meta.dirname, '../../client/dist'),
+        prefix: '/'
+    });
+
     const io: RTServer = new Server(server.server, {
         cors: {
             origin: FRONT_URL,
@@ -32,8 +35,8 @@ export async function buildServer(options: { enableLogger?: boolean }): Promise<
 
     })
 
-    // Creates server endpoints
-    registerControllers(server);
+    // Register a middleware that ensures the request contains valid roomID and playerName to allow any connection
+    io.use(validateConnection);
 
     server.addHook('preClose', (done) => {
         io.local.disconnectSockets(true);
