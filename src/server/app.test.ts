@@ -1,9 +1,9 @@
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {SERVER_CONFIG} from "@server/server.config.ts";
+import {SERVER_HOST, SERVER_PORT} from "@shared/projectConfig.ts";
 
 const listen = vi.fn<() => Promise<string>>();
 
-vi.mock('@server/buildServer.ts', () => ({
+vi.mock('@server/build/buildServer.ts', () => ({
     buildServer: vi.fn(() => ({ listen })),
 }));
 
@@ -17,8 +17,8 @@ describe('app', () => {
         await import('@server/app.ts');
 
         expect(listen).toHaveBeenCalledWith({
-            port: SERVER_CONFIG.PORT,
-            host: SERVER_CONFIG.HOST
+            port: SERVER_PORT,
+            host: SERVER_HOST
         });
     });
 
