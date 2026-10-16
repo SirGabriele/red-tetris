@@ -13,7 +13,7 @@ export interface ServerToClientEvents {
     [WsChannels.STATE_CHANGED]: (data: string) => void;
 }
 
-export const KEY_TO_CHANNEL = {
+export const CODE_TO_CHANNEL = {
     ArrowLeft: WsChannels.MOVE_LEFT,
     ArrowRight: WsChannels.MOVE_RIGHT,
     ArrowUp: WsChannels.ROTATE,
