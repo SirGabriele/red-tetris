@@ -55,7 +55,7 @@ export async function buildServer(options: { enableLogger?: boolean }): Promise<
         registerAllHandlers(io, socket);
 
         socket.on('disconnect', (reason) => {
-            console.log(`User ${socket.id} disconnected from room. Reason: ${reason}`);
+            socket.data.log.info(`User ${socket.id} disconnected from room. Reason: ${reason}`);
         });
     });
 

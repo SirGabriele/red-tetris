@@ -5,7 +5,7 @@ export function registerDropSoftHandler(io: RTServer, socket: RTSocket) {
     socket.on(WsChannels.DROP_SOFT, () => {
         const { roomID, log } = socket.data;
 
-        log('handling drop soft')
+        log.info('handling drop soft')
 
         io.to(roomID).emit('state-change', `Player ${socket.id} drop soft`);
     });

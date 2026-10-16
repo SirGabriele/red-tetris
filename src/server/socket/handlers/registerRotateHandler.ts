@@ -5,7 +5,7 @@ export function registerRotateHandler(io: RTServer, socket: RTSocket) {
     socket.on(WsChannels.ROTATE, () => {
         const { roomID, log } = socket.data;
 
-        log('handling rotate')
+        log.info('handling rotate')
 
         io.to(roomID).emit('state-change', `Player ${socket.id} rotate`);
     });
