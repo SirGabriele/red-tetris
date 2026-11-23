@@ -10,6 +10,9 @@ export default defineConfig({
 	],
 	server: {
 		host: '0.0.0.0',
+		proxy: {
+			'^/scoreboard/[^/]+$': process.env.SCOREBOARD_PROXY_TARGET ?? 'http://localhost:3000',
+		},
 		watch: {
 			usePolling: true,
 		},
