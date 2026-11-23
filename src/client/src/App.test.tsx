@@ -1,12 +1,17 @@
-import {cleanup, render, screen, within} from '@testing-library/react'
-import {beforeEach, describe, expect, it} from 'vitest'
+import {cleanup, fireEvent, render, screen, within} from '@testing-library/react'
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 
 import App from '@client/src/App.tsx'
+import {SCOREBOARD_PAGE_SIZE} from '@shared/http/dto/scoreboard.dto.ts'
 import {ROUTES} from "@shared/utils/routesUtils.ts";
 
 beforeEach(() => {
     cleanup()
     window.history.pushState({}, '', ROUTES.HOME)
+})
+
+afterEach(() => {
+    vi.unstubAllGlobals()
 })
 
 describe('App', () => {
@@ -24,12 +29,34 @@ describe('App', () => {
         expect(within(screen.getByRole('main')).getByRole('heading', {name: /^join\s+room$/i})).toBeInTheDocument()
     })
 
-    it('should display scoreboard page on /scoreboard', () => {
+    it('should load and paginate the scoreboard on /scoreboard', async () => {
+        const firstPage = {
+            scores: [{name: 'Jane', score: 123}],
+            currentPage: 1,
+            totalPages: 8,
+            pageSize: SCOREBOARD_PAGE_SIZE,
+        }
+        const fetchScores = vi.fn()
+            .mockResolvedValueOnce(Response.json(firstPage))
+            .mockResolvedValueOnce(Response.json({
+                ...firstPage,
+                scores: [{name: 'Sam', score: 98}],
+                currentPage: 2,
+            }))
+        vi.stubGlobal('fetch', fetchScores)
         window.history.pushState({}, '', ROUTES.SCOREBOARD)
 
         render(<App/>)
 
-        expect(within(screen.getByRole('main')).getByText('Scoreboard Page')).toBeInTheDocument()
+        const main = within(screen.getByRole('main'))
+        expect(main.getByRole('heading', {name: /^score\s*board$/i})).toBeInTheDocument()
+        expect(await main.findByText('123')).toBeInTheDocument()
+        expect(fetchScores).toHaveBeenNthCalledWith(1, '/scoreboard/1')
+
+        fireEvent.click(main.getByRole('button', {name: 'Next page'}))
+
+        expect(await main.findByText('98')).toBeInTheDocument()
+        expect(fetchScores).toHaveBeenNthCalledWith(2, '/scoreboard/2')
     })
 
     it('should redirect unknown route to home', async () => {
