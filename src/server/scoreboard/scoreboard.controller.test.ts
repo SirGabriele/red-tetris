@@ -2,6 +2,7 @@ import Fastify, {type FastifyInstance} from 'fastify'
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 
 import {SCOREBOARD_PAGE_SIZE, type ScoreboardDto} from '@shared/http/dto/scoreboard.dto.ts'
+import {FRONT_URL} from '@shared/projectConfig.ts'
 import {scoreboardController} from '@server/scoreboard/scoreboard.controller.ts'
 import * as scoreboardService from '@server/scoreboard/scoreboard.service.ts'
 
@@ -40,10 +41,12 @@ describe('scoreboardController', () => {
 
         const response = await server.inject({
             method: 'GET',
-            url: '/scoreboard/1'
+            url: '/scoreboard/1',
+            headers: {origin: FRONT_URL}
         })
 
         expect(response.statusCode).toBe(200)
+        expect(response.headers['access-control-allow-origin']).toBe(FRONT_URL)
         expect(response.json()).toEqual(scoreboard)
         expect(scoreboardService.getScoreboard).toHaveBeenCalledWith(1)
     })

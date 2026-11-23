@@ -2,6 +2,7 @@ import type {FastifyInstance, FastifyRequest} from 'fastify'
 
 import type {ScoreboardRequest} from '@server/scoreboard/dto/scoreboard.request.dto.ts'
 import type {ScoreboardDto} from '@shared/http/dto/scoreboard.dto.ts'
+import {FRONT_URL} from '@shared/projectConfig.ts'
 import * as scoreboardService from '@server/scoreboard/scoreboard.service.ts'
 
 const scoreboardSchema = {
@@ -26,7 +27,12 @@ const scoreboardSchema = {
 export async function scoreboardController(server: FastifyInstance): Promise<void> {
     server.get<ScoreboardRequest>(
         '/scoreboard/:pageNumber',
-        { schema: scoreboardSchema },
+        {
+            schema: scoreboardSchema,
+            async onRequest(_request, reply) {
+                reply.header('Access-Control-Allow-Origin', FRONT_URL)
+            }
+        },
         getScoreboard
     )
 }

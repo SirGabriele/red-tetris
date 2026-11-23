@@ -3,6 +3,7 @@ import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 
 import App from '@client/src/App.tsx'
 import {SCOREBOARD_PAGE_SIZE} from '@shared/http/dto/scoreboard.dto.ts'
+import {BACK_URL} from '@shared/projectConfig.ts'
 import {ROUTES} from "@shared/utils/routesUtils.ts";
 
 beforeEach(() => {
@@ -51,12 +52,12 @@ describe('App', () => {
         const main = within(screen.getByRole('main'))
         expect(main.getByRole('heading', {name: /^score\s*board$/i})).toBeInTheDocument()
         expect(await main.findByText('123')).toBeInTheDocument()
-        expect(fetchScores).toHaveBeenNthCalledWith(1, '/scoreboard/1')
+        expect(fetchScores).toHaveBeenNthCalledWith(1, `${BACK_URL}/scoreboard/1`)
 
         fireEvent.click(main.getByRole('button', {name: 'Next page'}))
 
         expect(await main.findByText('98')).toBeInTheDocument()
-        expect(fetchScores).toHaveBeenNthCalledWith(2, '/scoreboard/2')
+        expect(fetchScores).toHaveBeenNthCalledWith(2, `${BACK_URL}/scoreboard/2`)
     })
 
     it('should redirect unknown route to home', async () => {
