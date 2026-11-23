@@ -1,9 +1,23 @@
-    import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
+    import {afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi} from 'vitest';
+    import {mkdtemp, rm, writeFile} from 'node:fs/promises';
+    import {tmpdir} from 'node:os';
+    import {join} from 'node:path';
     import {buildServer} from "@server/build/buildServer.ts";
     import {FastifyInstance} from "fastify";
     import {io, type Socket} from 'socket.io-client';
     import {registerAllHandlers} from "@server/socket/registerAllHandlers.ts";
     import {Server} from "socket.io";
+
+    const indexHtml = '<!doctype html><title>Red Tetris</title>';
+    let staticRoot: string | undefined;
+
+    vi.mock('@fastify/static', async (importOriginal) => {
+        const {default: fastifyStatic} = await importOriginal<typeof import('@fastify/static')>();
+        const serveFixture: typeof fastifyStatic = (server, options) =>
+            fastifyStatic(server, {...options, root: staticRoot ?? options.root});
+
+        return {default: serveFixture};
+    });
 
     vi.mock('@server/socket/registerAllHandlers.ts', () => ({
         registerAllHandlers: vi.fn(),
@@ -12,6 +26,17 @@
     describe('buildServer', () => {
         let server: FastifyInstance;
         let clientSocket: Socket;
+
+        beforeAll(async () => {
+            staticRoot = await mkdtemp(join(tmpdir(), 'red-tetris-static-'));
+            await writeFile(join(staticRoot, 'index.html'), indexHtml);
+        });
+
+        afterAll(async () => {
+            if (staticRoot) {
+                await rm(staticRoot, {recursive: true, force: true});
+            }
+        });
 
         beforeEach(async () => {
             vi.clearAllMocks();
@@ -24,6 +49,8 @@
             if (clientSocket) {
                 clientSocket.disconnect();
             }
+
+            vi.restoreAllMocks();
         });
 
         it('should serve index.html for unknown routes', async () => {
@@ -34,11 +61,10 @@
 
             expect(response.statusCode).toBe(200);
             expect(response.headers['content-type']).toContain('text/html');
+            expect(response.body).toBe(indexHtml);
         });
 
         it('should register all handlers when a client connects', async () => {
-            const consoleSpy = vi.spyOn(console, 'log');
-
             clientSocket = await createSocket('1', 'Jane');
 
             await new Promise<void>((resolve, reject) => {
@@ -63,9 +89,14 @@
                 })
             );
 
+            const [, serverSocket] = vi.mocked(registerAllHandlers).mock.calls[0];
+            const logInfo = vi.spyOn(serverSocket.data.log, 'info');
+
             clientSocket.disconnect();
             await vi.waitFor(() => {
-                expect(consoleSpy).toHaveBeenCalledOnce();
+                expect(logInfo).toHaveBeenCalledWith(
+                    expect.stringContaining(`User ${serverSocket.id} disconnected from room.`)
+                );
             });
         });
 
