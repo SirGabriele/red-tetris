@@ -1,45 +1,53 @@
-import {beforeEach, describe, expect, it, vi} from "vitest";
-import type {RTServer, RTSocket} from "@server/socket/socket.types.ts";
+import {beforeEach, describe, expect, vi, it} from "vitest";
+import {RTServer, RTSocket} from "@server/socket/socket.types.ts";
 import {registerAllHandlers} from "@server/socket/registerAllHandlers.ts";
-import {WsChannels} from "@shared/ws/wsChannels.ts";
+import {registerJoinRoomHandler} from "@server/socket/handlers/registerJoinRoomHandler.ts";
+import {registerMoveLeftHandler} from "@server/socket/handlers/registerMoveLeftHandler.ts";
+import {registerRotateHandler} from "@server/socket/handlers/registerRotateHandler.ts";
+import {registerMoveRightHandler} from "@server/socket/handlers/registerMoveRightHandler.ts";
+import {registerDropSoftHandler} from "@server/socket/handlers/registerDropSoftHandler.ts";
+
+vi.mock('@server/socket/handlers/registerJoinRoomHandler.ts', () => ({
+    registerJoinRoomHandler: vi.fn(),
+}));
+
+vi.mock('@server/socket/handlers/registerMoveLeftHandler.ts', () => ({
+    registerMoveLeftHandler: vi.fn(),
+}));
+
+vi.mock('@server/socket/handlers/registerRotateHandler.ts', () => ({
+    registerRotateHandler: vi.fn(),
+}));
+
+vi.mock('@server/socket/handlers/registerMoveRightHandler.ts', () => ({
+    registerMoveRightHandler: vi.fn(),
+}));
+
+vi.mock('@server/socket/handlers/registerDropSoftHandler.ts', () => ({
+    registerDropSoftHandler: vi.fn(),
+}));
 
 describe('registerAllHandlers', () => {
-    const on = vi.fn<(event: string, handler: () => void) => void>();
-    const join = vi.fn();
-    const emit = vi.fn();
-    const to = vi.fn(() => ({emit}));
+    let mockIO:RTServer;
+    let mockSocket: RTSocket;
 
     beforeEach(() => {
         vi.clearAllMocks();
-        const io = {to} as unknown as RTServer;
-        const socket = {
+
+        mockIO = {} as RTServer;
+        mockSocket = {
             id: 'socket-id',
-            data: {roomID: '42', log: {info: vi.fn()}},
-            on,
-            join,
+            on: vi.fn()
         } as unknown as RTSocket;
+    })
 
-        registerAllHandlers(io, socket);
-    });
+    it('should invoke all registered event handlers with correct arguments', () => {
+        registerAllHandlers(mockIO, mockSocket);
 
-    it('should join the player to their room', () => {
-        expect(on).toHaveBeenCalledWith(WsChannels.JOIN_ROOM, expect.any(Function));
-        on.mock.calls.find(([event]) => event === WsChannels.JOIN_ROOM)?.[1]();
-
-        expect(join).toHaveBeenCalledWith('42');
-    });
-
-    it.each([
-        [WsChannels.MOVE_LEFT, 'move left'],
-        [WsChannels.MOVE_RIGHT, 'move right'],
-        [WsChannels.ROTATE, 'rotate'],
-        [WsChannels.DROP_SOFT, 'drop soft'],
-        [WsChannels.DROP_HARD, 'drop hard'],
-    ])('should broadcast %s to the player room', (channel, action) => {
-        expect(on).toHaveBeenCalledWith(channel, expect.any(Function));
-        on.mock.calls.find(([event]) => event === channel)?.[1]();
-
-        expect(to).toHaveBeenCalledWith('42');
-        expect(emit).toHaveBeenCalledWith('state-change', `Player socket-id ${action}`);
+        expect(registerJoinRoomHandler).toHaveBeenCalledWith(mockSocket);
+        expect(registerMoveLeftHandler).toHaveBeenCalledWith(mockIO, mockSocket);
+        expect(registerRotateHandler).toHaveBeenCalledWith(mockIO, mockSocket);
+        expect(registerMoveRightHandler).toHaveBeenCalledWith(mockIO, mockSocket);
+        expect(registerDropSoftHandler).toHaveBeenCalledWith(mockIO, mockSocket);
     });
 });
