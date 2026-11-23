@@ -1,11 +1,11 @@
 import type {Dispatch, SetStateAction} from "react";
 
-type FormFieldProps = {
+type PlayerNameFormFieldProps = {
     setPlayerName: Dispatch<SetStateAction<string>>;
     validateForm: () => boolean;
 };
 
-export default function PlayerNameFormField({ setPlayerName, validateForm }: FormFieldProps) {
+export default function PlayerNameFormField({ setPlayerName, validateForm }: PlayerNameFormFieldProps) {
     return (
         <div>
             <label htmlFor="name" className="mb-2 block text-sm text-(--text)">

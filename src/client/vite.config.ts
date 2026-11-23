@@ -17,4 +17,13 @@ export default defineConfig({
 	resolve: {
 		tsconfigPaths: true,
 	},
+	build: {
+		rollupOptions: {
+			output: {
+				entryFileNames: 'bundle.js',
+				chunkFileNames: 'assets/[name].js',
+				assetFileNames: 'assets/[name].[ext]',
+			},
+		}
+	}
 })

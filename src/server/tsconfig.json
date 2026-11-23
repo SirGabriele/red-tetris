@@ -13,6 +13,7 @@
     },
     "allowImportingTsExtensions": true,
     "noUncheckedIndexedAccess": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   }
 }

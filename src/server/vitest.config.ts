@@ -11,9 +11,7 @@ export default defineConfig({
             include: ['**/*.ts'],
             exclude: [
                 '**/*.test.ts',
-                'coverage/**',
-                '**/*config.ts',
-                '**/*.dto.ts'
+                '**/*.types.ts'
             ],
             reporter: ['html', 'text'],
             thresholds: {

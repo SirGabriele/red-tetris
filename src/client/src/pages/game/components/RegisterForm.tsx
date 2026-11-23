@@ -13,7 +13,7 @@ export type FormError = {
 export type FormErrors = Array<FormError>
 
 type RegisterFormProps = {
-    onSubmit: (playerName: string, roomID: string) => Promise<void>;
+    onSubmit: (playerName: string, roomID: string) => void;
 };
 
 export default function RegisterForm({ onSubmit }: RegisterFormProps) {
@@ -44,12 +44,12 @@ export default function RegisterForm({ onSubmit }: RegisterFormProps) {
         return newErrors.length === 0;
     }
 
-    async function submit(): Promise<void> {
+    function submit(): void {
         if (!validateForm()) {
             return;
         }
 
-        await onSubmit(playerName, roomID);
+        onSubmit(roomID, playerName);
     }
 
     return (

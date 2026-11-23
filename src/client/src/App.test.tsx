@@ -1,30 +1,8 @@
-import {cleanup, render, screen, waitFor} from '@testing-library/react'
-import {beforeEach, describe, expect, it, vi} from 'vitest'
-import {Outlet} from 'react-router-dom'
+import {cleanup, render, screen, within} from '@testing-library/react'
+import {beforeEach, describe, expect, it} from 'vitest'
 
 import App from '@client/src/App.tsx'
 import {ROUTES} from "@shared/utils/routesUtils.ts";
-
-vi.mock('@client/src/components/layout/Layout.tsx', () => ({
-    default: () => (
-        <>
-            <div>Layout</div>
-            <Outlet/>
-        </>
-    )
-}))
-
-vi.mock('@client/src/pages/HomePage.tsx', () => ({
-    default: () => <div>Home Page</div>
-}))
-
-vi.mock('@client/src/pages/GamePage.tsx', () => ({
-    default: () => <div>Game Page</div>
-}))
-
-vi.mock('@client/src/pages/ScoreboardPage.tsx', () => ({
-    default: () => <div>Scoreboard Page</div>
-}))
 
 beforeEach(() => {
     cleanup()
@@ -35,8 +13,7 @@ describe('App', () => {
     it('should display home page on root route', () => {
         render(<App/>)
 
-        expect(screen.getByText('Layout')).toBeInTheDocument()
-        expect(screen.getByText('Home Page')).toBeInTheDocument()
+        expect(within(screen.getByRole('main')).getByRole('heading', {name: 'RED-TETRIS'})).toBeInTheDocument()
     })
 
     it('should display game page on /game', () => {
@@ -44,17 +21,15 @@ describe('App', () => {
 
         render(<App/>)
 
-        expect(screen.getByText('Layout')).toBeInTheDocument()
-        expect(screen.getByText('Game Page')).toBeInTheDocument()
+        expect(within(screen.getByRole('main')).getByRole('heading', {name: /^join\s+room$/i})).toBeInTheDocument()
     })
 
-    it('should display game page on /scoreboard', () => {
+    it('should display scoreboard page on /scoreboard', () => {
         window.history.pushState({}, '', ROUTES.SCOREBOARD)
 
         render(<App/>)
 
-        expect(screen.getByText('Layout')).toBeInTheDocument()
-        expect(screen.getByText('Scoreboard Page')).toBeInTheDocument()
+        expect(within(screen.getByRole('main')).getByText('Scoreboard Page')).toBeInTheDocument()
     })
 
     it('should redirect unknown route to home', async () => {
@@ -62,8 +37,7 @@ describe('App', () => {
 
         render(<App/>)
 
-        await waitFor(() => {
-            expect(screen.getByText('Home Page')).toBeInTheDocument()
-        })
+        expect(await within(screen.getByRole('main')).findByRole('heading', {name: 'RED-TETRIS'})).toBeInTheDocument()
+        expect(window.location.pathname).toBe(ROUTES.HOME)
     })
 })

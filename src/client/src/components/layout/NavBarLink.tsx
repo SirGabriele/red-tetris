@@ -7,7 +7,7 @@ type NavBarLinkProps = {
     end?: boolean
 }
 
-export default function navBarLink({ to, children, end = false }: NavBarLinkProps) {
+export default function NavBarLink({ to, children, end = false }: NavBarLinkProps) {
     return (
         <NavLink to={to} end={end} className="relative px-4 py-5 text-sm">
             {({ isActive }) => (

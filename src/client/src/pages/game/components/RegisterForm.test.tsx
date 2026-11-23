@@ -16,12 +16,14 @@ describe('RegisterForm', () => {
 
     it('should call onSubmit when the form button is clicked with valid values', async () => {
         const user = userEvent.setup();
+        const playerName = 'Jane';
+        const roomID = '123';
 
-        await user.type(screen.getByTestId('player-name-form-field'), 'Jane');
-        await user.type(screen.getByTestId('room-id-form-field'), '123');
+        await user.type(screen.getByTestId('player-name-form-field'), playerName);
+        await user.type(screen.getByTestId('room-id-form-field'), roomID);
         await user.click(screen.getByTestId('submit-button-form-field'));
 
-        expect(mockOnSubmit).toHaveBeenCalledWith('Jane', '123');
+        expect(mockOnSubmit).toHaveBeenCalledWith(roomID, playerName);
     });
 
     it('should not call onSubmit when the form button is clicked with invalid values', async () => {

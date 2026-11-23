@@ -1,10 +1,10 @@
 import type {FormErrors} from "@client/src/pages/game/components/RegisterForm.tsx";
 
-type FormErrorsProps = {
+type FormErrorsDisplayProps = {
     errors: FormErrors
 }
 
-export default function FormErrorsDisplay({ errors }: FormErrorsProps) {
+export default function FormErrorsDisplay({ errors }: FormErrorsDisplayProps) {
     return (
         <div>
             {
