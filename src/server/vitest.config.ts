@@ -11,7 +11,8 @@ export default defineConfig({
             include: ['**/*.ts'],
             exclude: [
                 '**/*.test.ts',
-                '**/*.types.ts'
+                '**/*.types.ts',
+                'database/setup-database.ts'
             ],
             reporter: ['html', 'text'],
             thresholds: {

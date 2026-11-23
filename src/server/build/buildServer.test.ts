@@ -7,6 +7,7 @@
     import {io, type Socket} from 'socket.io-client';
     import {registerAllHandlers} from "@server/socket/registerAllHandlers.ts";
     import {Server} from "socket.io";
+    import {SCOREBOARD_PAGE_SIZE} from "@shared/http/dto/scoreboard.dto.ts";
 
     const indexHtml = '<!doctype html><title>Red Tetris</title>';
     let staticRoot: string | undefined;
@@ -62,6 +63,21 @@
             expect(response.statusCode).toBe(200);
             expect(response.headers['content-type']).toContain('text/html');
             expect(response.body).toBe(indexHtml);
+        });
+
+        it('should serve the scoreboard from SQLite', async () => {
+            const response = await server.inject({
+                method: 'GET',
+                url: '/scoreboard/1',
+            });
+
+            expect(response.statusCode).toBe(200);
+            expect(response.json()).toEqual({
+                scores: expect.any(Array),
+                currentPage: 1,
+                totalPages: expect.any(Number),
+                pageSize: SCOREBOARD_PAGE_SIZE,
+            });
         });
 
         it('should register all handlers when a client connects', async () => {
