@@ -30,6 +30,16 @@ describe('App', () => {
         expect(within(screen.getByRole('main')).getByRole('heading', {name: /^join\s+room$/i})).toBeInTheDocument()
     })
 
+    it('should navigate to the game when Play now is clicked', () => {
+        render(<App/>)
+
+        const main = within(screen.getByRole('main'))
+        fireEvent.click(main.getByRole('button', {name: /^play\s+now$/i}))
+
+        expect(window.location.pathname).toBe(ROUTES.GAME)
+        expect(main.getByRole('heading', {name: /^join\s+room$/i})).toBeInTheDocument()
+    })
+
     it('should load and paginate the scoreboard on /scoreboard', async () => {
         const firstPage = {
             scores: [{name: 'Jane', score: 123}],
