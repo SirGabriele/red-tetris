@@ -12,7 +12,7 @@ const EMPTY_SCOREBOARD: ScoreboardDto = {
 }
 
 export default function ScoreboardPage() {
-    const [scoreboard, setScoreboard] = useState<ScoreboardDto>(EMPTY_SCOREBOARD)
+    const [scoreboard, setScoreboard] = useState<ScoreboardDto | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(false)
 
@@ -60,7 +60,8 @@ export default function ScoreboardPage() {
                     )
                     : (
                         <ScoreboardPanel
-                            scoreboard={scoreboard}
+                            scoreboard={scoreboard ?? EMPTY_SCOREBOARD}
+                            initialLoading={scoreboard === null}
                             loading={loading}
                             onPageChange={handlePageChange}
                         />

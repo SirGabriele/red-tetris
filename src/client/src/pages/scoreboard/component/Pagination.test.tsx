@@ -20,12 +20,47 @@ describe('Pagination', () => {
         expect(onPageChange.mock.calls).toEqual([[4], [10]])
     })
 
-    it('should display the final pages and disable the next arrow on the last page', () => {
-        render(<Pagination currentPage={10} totalPages={10} loading={false} onPageChange={vi.fn()}/>)
+    it('should keep the arrows and current page in the same slots at the start and end', () => {
+        const onPageChange = vi.fn()
+        const {rerender} = render(
+            <Pagination currentPage={1} totalPages={11} loading={false} onPageChange={onPageChange}/>
+        )
 
+        const previous = screen.getByRole('button', {name: 'Previous page'})
+        const next = screen.getByRole('button', {name: 'Next page'})
+        const first = screen.getByRole('button', {name: '1', current: 'page'})
+        const pageSlots = first.parentElement!
+
+        expect(pageSlots.children).toHaveLength(7)
+        expect(pageSlots.children[3]).toBe(first)
+        expect(pageSlots.previousElementSibling).toBe(previous)
+        expect(pageSlots.nextElementSibling).toBe(next)
+        expect(previous).toBeDisabled()
+        expect(next).toBeEnabled()
         expect(screen.getAllByRole('button', {name: /^\d+$/}).map(button => button.textContent))
-            .toEqual(['1', '7', '8', '9', '10'])
+            .toEqual(['1', '2', '11'])
+
+        rerender(<Pagination currentPage={11} totalPages={11} loading={false} onPageChange={onPageChange}/>)
+
+        expect(pageSlots.children).toHaveLength(7)
+        expect(pageSlots.children[3]).toBe(screen.getByRole('button', {name: '11', current: 'page'}))
+        expect(pageSlots.previousElementSibling).toBe(previous)
+        expect(pageSlots.nextElementSibling).toBe(next)
+        expect(previous).toBeEnabled()
+        expect(next).toBeDisabled()
+        expect(screen.getAllByRole('button', {name: /^\d+$/}).map(button => button.textContent))
+            .toEqual(['1', '10', '11'])
         expect(screen.getAllByText('...')).toHaveLength(1)
+    })
+
+    it('should keep page one centered when there are no scores', () => {
+        const onPageChange = vi.fn()
+        render(<Pagination currentPage={1} totalPages={0} loading={false} onPageChange={onPageChange}/>)
+
+        const page = screen.getByRole('button', {name: '1', current: 'page'})
+        expect(page.parentElement?.children[3]).toBe(page)
+        expect(page).toBeDisabled()
+        expect(screen.getByRole('button', {name: 'Previous page'})).toBeDisabled()
         expect(screen.getByRole('button', {name: 'Next page'})).toBeDisabled()
     })
 })

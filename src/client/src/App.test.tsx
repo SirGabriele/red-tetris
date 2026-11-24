@@ -1,4 +1,4 @@
-import {cleanup, fireEvent, render, screen, within} from '@testing-library/react'
+import {act, cleanup, fireEvent, render, screen, waitForElementToBeRemoved, within} from '@testing-library/react'
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 
 import App from '@client/src/App.tsx'
@@ -47,13 +47,13 @@ describe('App', () => {
             totalPages: 8,
             pageSize: SCOREBOARD_PAGE_SIZE,
         }
+        let resolveSecondPage!: (response: Response) => void
+        const secondPage = new Promise<Response>(resolve => {
+            resolveSecondPage = resolve
+        })
         const fetchScores = vi.fn()
             .mockResolvedValueOnce(Response.json(firstPage))
-            .mockResolvedValueOnce(Response.json({
-                ...firstPage,
-                scores: [{name: 'Sam', score: 98}],
-                currentPage: 2,
-            }))
+            .mockReturnValueOnce(secondPage)
         vi.stubGlobal('fetch', fetchScores)
         window.history.pushState({}, '', ROUTES.SCOREBOARD)
 
@@ -66,7 +66,24 @@ describe('App', () => {
 
         fireEvent.click(main.getByRole('button', {name: 'Next page'}))
 
+        expect(main.getByText('123')).toBeInTheDocument()
+        expect(main.getByRole('button', {name: '1', current: 'page'})).toBeInTheDocument()
+        expect(main.getByRole('button', {name: 'Next page'})).toBeDisabled()
+
+        await waitForElementToBeRemoved(main.getByText('123'))
+        expect(main.getByRole('button', {name: '1', current: 'page'})).toBeInTheDocument()
+
+        await act(async () => {
+            resolveSecondPage(Response.json({
+                ...firstPage,
+                scores: [{name: 'Sam', score: 98}],
+                currentPage: 2,
+            }))
+        })
+
         expect(await main.findByText('98')).toBeInTheDocument()
+        expect(main.queryByText('123')).not.toBeInTheDocument()
+        expect(main.getByRole('button', {name: '2', current: 'page'})).toBeInTheDocument()
         expect(fetchScores).toHaveBeenNthCalledWith(2, `${BACK_URL}/scoreboard/2`)
     })
 
