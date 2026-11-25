@@ -53,14 +53,49 @@ describe('Pagination', () => {
         expect(screen.getAllByText('...')).toHaveLength(1)
     })
 
-    it('should keep page one centered when there are no scores', () => {
+    it.each([-3, 0, 1.5, NaN, Infinity])('should fall back to page one for invalid current page %s', currentPage => {
         const onPageChange = vi.fn()
-        render(<Pagination currentPage={1} totalPages={0} loading={false} onPageChange={onPageChange}/>)
+        render(<Pagination currentPage={currentPage} totalPages={3} loading={false} onPageChange={onPageChange}/>)
+
+        expect(screen.getByRole('button', {name: '1', current: 'page'})).toBeInTheDocument()
+        expect(screen.getAllByRole('button', {name: /^\d+$/}).map(button => button.textContent))
+            .toEqual(['1', '2', '3'])
+        fireEvent.click(screen.getByRole('button', {name: 'Previous page'}))
+        fireEvent.click(screen.getByRole('button', {name: 'Next page'}))
+
+        expect(onPageChange.mock.calls).toEqual([[2]])
+    })
+
+    it('should clamp a current page past the end to the last page', () => {
+        const onPageChange = vi.fn()
+        render(<Pagination currentPage={99} totalPages={3} loading={false} onPageChange={onPageChange}/>)
+
+        expect(screen.getByRole('button', {name: '3', current: 'page'})).toBeInTheDocument()
+        fireEvent.click(screen.getByRole('button', {name: 'Next page'}))
+        fireEvent.click(screen.getByRole('button', {name: 'Previous page'}))
+
+        expect(onPageChange.mock.calls).toEqual([[2]])
+    })
+
+    it.each([0, -3, 1.5, NaN, Infinity])('should disable pagination for empty or invalid page count %s', totalPages => {
+        const onPageChange = vi.fn()
+        render(<Pagination currentPage={1} totalPages={totalPages} loading={false} onPageChange={onPageChange}/>)
 
         const page = screen.getByRole('button', {name: '1', current: 'page'})
         expect(page.parentElement?.children[3]).toBe(page)
         expect(page).toBeDisabled()
         expect(screen.getByRole('button', {name: 'Previous page'})).toBeDisabled()
         expect(screen.getByRole('button', {name: 'Next page'})).toBeDisabled()
+    })
+
+    it('should disable every navigation button while loading', () => {
+        const onPageChange = vi.fn()
+        render(<Pagination currentPage={2} totalPages={3} loading={true} onPageChange={onPageChange}/>)
+
+        for (const button of screen.getAllByRole('button')) {
+            expect(button).toBeDisabled()
+            fireEvent.click(button)
+        }
+        expect(onPageChange).not.toHaveBeenCalled()
     })
 })

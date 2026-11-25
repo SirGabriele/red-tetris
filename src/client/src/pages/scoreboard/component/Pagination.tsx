@@ -29,11 +29,16 @@ function getPaginationItems(currentPage: number, totalPages: number): Pagination
 }
 
 export default function Pagination({
-                                       currentPage,
-                                       totalPages,
+                                       currentPage: requestedPage,
+                                       totalPages: pageCount,
                                        loading,
                                        onPageChange
                                    }: PaginationProps) {
+    const totalPages = Number.isSafeInteger(pageCount) ? Math.max(0, pageCount) : 0
+    const currentPage = Number.isSafeInteger(requestedPage)
+        ? Math.max(1, Math.min(requestedPage, totalPages))
+        : 1
+
     return (
         <div className="grid w-full grid-cols-[2rem_14rem_2rem] items-center justify-center gap-2 font-mono text-(--text)">
             <PaginationArrowButton

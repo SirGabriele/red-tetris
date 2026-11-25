@@ -69,5 +69,20 @@ describe('scoreboardService', () => {
                 pageSize: SCOREBOARD_PAGE_SIZE
             })
         })
+
+        it.each([
+            {page: 1, scoreCount: 0, totalPages: 0},
+            {page: 4, scoreCount: 25, totalPages: 3},
+        ])('should return an empty result for page $page with $scoreCount scores', ({page, scoreCount, totalPages}) => {
+            vi.mocked(scoreboardRepository.findScores).mockReturnValue([])
+            vi.mocked(scoreboardRepository.countScores).mockReturnValue(scoreCount)
+
+            expect(getScoreboard(page)).toEqual({
+                scores: [],
+                currentPage: page,
+                totalPages,
+                pageSize: SCOREBOARD_PAGE_SIZE
+            })
+        })
     })
 })

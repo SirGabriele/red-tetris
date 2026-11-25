@@ -51,23 +51,33 @@ describe('scoreboardController', () => {
         expect(scoreboardService.getScoreboard).toHaveBeenCalledWith(1)
     })
 
-    it('should return 400 when page number is lower than 1', async () => {
+    it.each(['-1', '0', '1.5', 'invalid', 'NaN', 'Infinity', '-Infinity', '1e100', '1e309', String(Number.MAX_SAFE_INTEGER)])(
+        'should reject invalid page %s without querying scores',
+        async page => {
+            const response = await server.inject({
+                method: 'GET',
+                url: `/scoreboard/${page}`
+            })
+
+            expect(response.statusCode).toBe(400)
+            expect(scoreboardService.getScoreboard).not.toHaveBeenCalled()
+        }
+    )
+
+    it('should accept the largest page with a safe SQLite offset', async () => {
+        const page = Math.floor(Number.MAX_SAFE_INTEGER / SCOREBOARD_PAGE_SIZE) + 1
+        vi.mocked(scoreboardService.getScoreboard).mockReturnValue({
+            scores: [],
+            currentPage: page,
+            totalPages: 0,
+            pageSize: SCOREBOARD_PAGE_SIZE
+        })
         const response = await server.inject({
             method: 'GET',
-            url: '/scoreboard/0'
+            url: `/scoreboard/${page}`
         })
 
-        expect(response.statusCode).toBe(400)
-        expect(scoreboardService.getScoreboard).not.toHaveBeenCalled()
-    })
-
-    it('should return 400 when page number is invalid', async () => {
-        const response = await server.inject({
-            method: 'GET',
-            url: '/scoreboard/invalid'
-        })
-
-        expect(response.statusCode).toBe(400)
-        expect(scoreboardService.getScoreboard).not.toHaveBeenCalled()
+        expect(response.statusCode).toBe(200)
+        expect(scoreboardService.getScoreboard).toHaveBeenCalledWith(page)
     })
 })
