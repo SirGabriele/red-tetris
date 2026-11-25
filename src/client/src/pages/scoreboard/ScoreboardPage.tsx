@@ -22,8 +22,7 @@ export default function ScoreboardPage() {
 
         try {
             setScoreboard(await scoreResource.getScoreboard(page))
-        } catch (error) {
-            console.error(error)
+        } catch {
             setError(true)
         } finally {
             setLoading(false)
@@ -52,21 +51,13 @@ export default function ScoreboardPage() {
             </div>
 
             <div className="flex flex-row items-center gap-20">
-                {error
-                    ? (
-                        <p className="font-mono text-(--accent)">
-                            Unable to retrieve scores.
-                        </p>
-                    )
-                    : (
-                        <ScoreboardPanel
-                            scoreboard={scoreboard ?? EMPTY_SCOREBOARD}
-                            initialLoading={scoreboard === null}
-                            loading={loading}
-                            onPageChange={handlePageChange}
-                        />
-                    )
-                }
+                <ScoreboardPanel
+                    scoreboard={scoreboard ?? EMPTY_SCOREBOARD}
+                    initialLoading={loading && scoreboard === null}
+                    loading={loading}
+                    error={error}
+                    onPageChange={handlePageChange}
+                />
             </div>
         </section>
     )

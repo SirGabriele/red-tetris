@@ -9,6 +9,7 @@ interface ScoreboardPanelProps {
     scoreboard: ScoreboardDto
     initialLoading: boolean
     loading: boolean
+    error: boolean
     onPageChange: (page: number) => void
 }
 
@@ -16,6 +17,7 @@ export default function ScoreboardPanel({
                                             scoreboard,
                                             initialLoading,
                                             loading,
+                                            error,
                                             onPageChange
                                         }: ScoreboardPanelProps) {
     const [showDelayedSkeleton, setShowDelayedSkeleton] = useState(false)
@@ -34,8 +36,12 @@ export default function ScoreboardPanel({
 
     return (
         <div className="flex flex-col gap-5">
-            <div className="flex h-130 w-90 flex-col overflow-hidden rounded-md border border-(--accent-border)
-                bg-(--bg-card) pt-6 shadow-(--shadow-red)">
+            <div
+                role="region"
+                aria-label="Scoreboard results"
+                className="flex h-130 w-90 flex-col overflow-hidden rounded-md border border-(--accent-border)
+                    bg-(--bg-card) pt-6 shadow-(--shadow-red)"
+            >
                 <div className="grid grid-cols-[3rem_1fr_auto] border-b border-(--border) px-6 pb-3 font-mono
                     text-xs tracking-[0.15em] text-(--text-muted)">
                     <span>#</span>
@@ -44,7 +50,7 @@ export default function ScoreboardPanel({
                 </div>
 
                 <div
-                    className={`flex min-h-0 flex-1 flex-col motion-safe:transition-opacity motion-safe:duration-150
+                    className={`relative flex min-h-0 flex-1 flex-col motion-safe:transition-opacity motion-safe:duration-150
                         ${loading && !showSkeleton ? 'opacity-75' : 'opacity-100'}`}
                     aria-busy={loading}
                 >
@@ -88,6 +94,13 @@ export default function ScoreboardPanel({
                             ))
                         }
                     </div>
+                    {error && (
+                        <div className="absolute inset-0 grid place-items-center px-6">
+                            <p role="alert" className="rounded-md bg-(--bg-card) px-4 py-3 text-center font-mono text-(--accent)">
+                                Unable to retrieve scores.
+                            </p>
+                        </div>
+                    )}
                 </div>
             </div>
 
