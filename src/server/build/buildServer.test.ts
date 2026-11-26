@@ -8,6 +8,7 @@
     import {registerAllHandlers} from "@server/socket/registerAllHandlers.ts";
     import {Server} from "socket.io";
     import {SCOREBOARD_PAGE_SIZE} from "@shared/http/dto/scoreboard.dto.ts";
+    import {FRONT_URL} from "@shared/projectConfig.ts";
 
     const indexHtml = '<!doctype html><title>Red Tetris</title>';
     let staticRoot: string | undefined;
@@ -69,15 +70,29 @@
             const response = await server.inject({
                 method: 'GET',
                 url: '/scoreboard/1',
+                headers: {origin: FRONT_URL},
             });
 
             expect(response.statusCode).toBe(200);
+            expect(response.headers['access-control-allow-origin']).toBe(FRONT_URL);
+            expect(response.headers.vary).toContain('Origin');
             expect(response.json()).toEqual({
                 scores: expect.any(Array),
                 currentPage: 1,
                 totalPages: expect.any(Number),
                 pageSize: SCOREBOARD_PAGE_SIZE,
             });
+        });
+
+        it('should omit CORS permission for a different origin', async () => {
+            const response = await server.inject({
+                method: 'GET',
+                url: '/scoreboard/1',
+                headers: {origin: 'https://example.com'},
+            });
+
+            expect(response.headers['access-control-allow-origin']).toBeUndefined();
+            expect(response.headers.vary).toContain('Origin');
         });
 
         it('should register all handlers when a client connects', async () => {

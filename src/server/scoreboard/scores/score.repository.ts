@@ -1,6 +1,7 @@
 import {database} from '@server/database/database.ts'
+import type {ScoreRow} from '@server/scoreboard/scores/score.mapper.ts'
 
-export function findScores(limit: number, offset: number) {
+export function findScores(limit: number, offset: number): ScoreRow[] {
     const statement = database.prepare(`
         SELECT player_name, score
         FROM score

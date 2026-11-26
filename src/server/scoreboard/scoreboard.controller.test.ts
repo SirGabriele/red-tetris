@@ -2,9 +2,8 @@ import Fastify, {type FastifyInstance} from 'fastify'
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 
 import {SCOREBOARD_PAGE_SIZE, type ScoreboardDto} from '@shared/http/dto/scoreboard.dto.ts'
-import {FRONT_URL} from '@shared/projectConfig.ts'
 import {scoreboardController} from '@server/scoreboard/scoreboard.controller.ts'
-import * as scoreboardService from '@server/scoreboard/scoreboard.service.ts'
+import {getScoreboard} from '@server/scoreboard/scoreboard.service.ts'
 
 vi.mock('@server/scoreboard/scoreboard.service.ts', () => ({
     getScoreboard: vi.fn()
@@ -37,18 +36,16 @@ describe('scoreboardController', () => {
             pageSize: SCOREBOARD_PAGE_SIZE
         }
 
-        vi.mocked(scoreboardService.getScoreboard).mockReturnValue(scoreboard)
+        vi.mocked(getScoreboard).mockReturnValue(scoreboard)
 
         const response = await server.inject({
             method: 'GET',
-            url: '/scoreboard/1',
-            headers: {origin: FRONT_URL}
+            url: '/scoreboard/1'
         })
 
         expect(response.statusCode).toBe(200)
-        expect(response.headers['access-control-allow-origin']).toBe(FRONT_URL)
         expect(response.json()).toEqual(scoreboard)
-        expect(scoreboardService.getScoreboard).toHaveBeenCalledWith(1)
+        expect(getScoreboard).toHaveBeenCalledWith(1)
     })
 
     it.each(['-1', '0', '1.5', 'invalid', 'NaN', 'Infinity', '-Infinity', '1e100', '1e309', String(Number.MAX_SAFE_INTEGER)])(
@@ -60,13 +57,13 @@ describe('scoreboardController', () => {
             })
 
             expect(response.statusCode).toBe(400)
-            expect(scoreboardService.getScoreboard).not.toHaveBeenCalled()
+            expect(getScoreboard).not.toHaveBeenCalled()
         }
     )
 
     it('should accept the largest page with a safe SQLite offset', async () => {
         const page = Math.floor(Number.MAX_SAFE_INTEGER / SCOREBOARD_PAGE_SIZE) + 1
-        vi.mocked(scoreboardService.getScoreboard).mockReturnValue({
+        vi.mocked(getScoreboard).mockReturnValue({
             scores: [],
             currentPage: page,
             totalPages: 0,
@@ -78,6 +75,6 @@ describe('scoreboardController', () => {
         })
 
         expect(response.statusCode).toBe(200)
-        expect(scoreboardService.getScoreboard).toHaveBeenCalledWith(page)
+        expect(getScoreboard).toHaveBeenCalledWith(page)
     })
 })

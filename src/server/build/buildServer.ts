@@ -22,6 +22,15 @@ export async function buildServer(options: { enableLogger?: boolean }): Promise<
         }
     });
 
+    server.addHook('onRequest', async (request, reply) => {
+        if (request.method === 'GET') {
+            reply.header('Vary', 'Origin');
+            if (request.headers.origin === FRONT_URL) {
+                reply.header('Access-Control-Allow-Origin', FRONT_URL);
+            }
+        }
+    });
+
     server.register(fastifyStatic, {
         root: path.resolve(import.meta.dirname, '../../client/dist'),
         prefix: '/'

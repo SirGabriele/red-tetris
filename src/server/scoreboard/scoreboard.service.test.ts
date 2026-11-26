@@ -1,7 +1,7 @@
 import {beforeEach, describe, expect, it, vi} from 'vitest'
 
 import {SCOREBOARD_PAGE_SIZE} from '@shared/http/dto/scoreboard.dto.ts'
-import * as scoreboardRepository from '@server/scoreboard/scores/score.repository.ts'
+import {countScores, findScores} from '@server/scoreboard/scores/score.repository.ts'
 import {getScoreboard} from '@server/scoreboard/scoreboard.service.ts'
 
 vi.mock('@server/scoreboard/scores/score.repository.ts', () => ({
@@ -16,7 +16,7 @@ describe('scoreboardService', () => {
 
     describe('getScoreboard', () => {
         it('should return scoreboard first page', () => {
-            vi.mocked(scoreboardRepository.findScores).mockReturnValue([
+            vi.mocked(findScores).mockReturnValue([
                 {
                     player_name: 'Player 1',
                     score: 1000
@@ -27,12 +27,12 @@ describe('scoreboardService', () => {
                 }
             ])
 
-            vi.mocked(scoreboardRepository.countScores).mockReturnValue(25)
+            vi.mocked(countScores).mockReturnValue(25)
 
             const result = getScoreboard(1)
 
-            expect(scoreboardRepository.findScores).toHaveBeenCalledWith(SCOREBOARD_PAGE_SIZE, 0)
-            expect(scoreboardRepository.countScores).toHaveBeenCalledOnce()
+            expect(findScores).toHaveBeenCalledWith(SCOREBOARD_PAGE_SIZE, 0)
+            expect(countScores).toHaveBeenCalledOnce()
 
             expect(result).toEqual({
                 scores: [
@@ -52,12 +52,12 @@ describe('scoreboardService', () => {
         })
 
         it('should calculate offset for second page', () => {
-            vi.mocked(scoreboardRepository.findScores).mockReturnValue([])
-            vi.mocked(scoreboardRepository.countScores).mockReturnValue(25)
+            vi.mocked(findScores).mockReturnValue([])
+            vi.mocked(countScores).mockReturnValue(25)
 
             const result = getScoreboard(2)
 
-            expect(scoreboardRepository.findScores).toHaveBeenCalledWith(
+            expect(findScores).toHaveBeenCalledWith(
                 SCOREBOARD_PAGE_SIZE,
                 SCOREBOARD_PAGE_SIZE
             )
@@ -74,8 +74,8 @@ describe('scoreboardService', () => {
             {page: 1, scoreCount: 0, totalPages: 0},
             {page: 4, scoreCount: 25, totalPages: 3},
         ])('should return an empty result for page $page with $scoreCount scores', ({page, scoreCount, totalPages}) => {
-            vi.mocked(scoreboardRepository.findScores).mockReturnValue([])
-            vi.mocked(scoreboardRepository.countScores).mockReturnValue(scoreCount)
+            vi.mocked(findScores).mockReturnValue([])
+            vi.mocked(countScores).mockReturnValue(scoreCount)
 
             expect(getScoreboard(page)).toEqual({
                 scores: [],
