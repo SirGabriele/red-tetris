@@ -81,9 +81,7 @@ describe('Pagination', () => {
         const onPageChange = vi.fn()
         render(<Pagination currentPage={1} totalPages={totalPages} loading={false} onPageChange={onPageChange}/>)
 
-        const page = screen.getByRole('button', {name: '1', current: 'page'})
-        expect(page.parentElement?.children[3]).toBe(page)
-        expect(page).toBeDisabled()
+        expect(screen.queryByRole('button', {name: /^\d+$/})).not.toBeInTheDocument()
         expect(screen.getByRole('button', {name: 'Previous page'})).toBeDisabled()
         expect(screen.getByRole('button', {name: 'Next page'})).toBeDisabled()
     })
@@ -92,10 +90,30 @@ describe('Pagination', () => {
         const onPageChange = vi.fn()
         render(<Pagination currentPage={2} totalPages={3} loading={true} onPageChange={onPageChange}/>)
 
-        for (const button of screen.getAllByRole('button')) {
-            expect(button).toBeDisabled()
+        for (const button of screen.getAllByRole('button', {name: /^\d+$/})) {
+            expect(button).toHaveAttribute('aria-disabled', 'true')
             fireEvent.click(button)
         }
+        expect(screen.getByRole('button', {name: 'Previous page'})).toBeDisabled()
+        expect(screen.getByRole('button', {name: 'Next page'})).toBeDisabled()
         expect(onPageChange).not.toHaveBeenCalled()
+    })
+
+    it('should preserve the selected button and its keyboard focus during a page change', () => {
+        const onPageChange = vi.fn()
+        const {rerender} = render(
+            <Pagination currentPage={1} totalPages={3} loading={false} onPageChange={onPageChange}/>
+        )
+        const secondPage = screen.getByRole('button', {name: '2'})
+        secondPage.focus()
+        fireEvent.click(secondPage)
+        expect(onPageChange).toHaveBeenCalledWith(2)
+
+        rerender(<Pagination currentPage={1} totalPages={3} loading onPageChange={onPageChange}/>)
+        expect(secondPage).toHaveFocus()
+
+        rerender(<Pagination currentPage={2} totalPages={3} loading={false} onPageChange={onPageChange}/>)
+        expect(screen.getByRole('button', {name: '2', current: 'page'})).toBe(secondPage)
+        expect(secondPage).toHaveFocus()
     })
 })

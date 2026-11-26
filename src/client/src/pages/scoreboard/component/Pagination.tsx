@@ -1,4 +1,4 @@
-import PaginationArrowButton from "@client/src/pages/scoreboard/component/PaginationArrowButton.tsx";
+import PaginationArrowButton from '@client/src/pages/scoreboard/component/PaginationArrowButton.tsx'
 
 interface PaginationProps {
     currentPage: number
@@ -22,7 +22,7 @@ function getPaginationItems(currentPage: number, totalPages: number): Pagination
     return [
         ...Array<PaginationItem>(3 - previousPages.length).fill(null),
         ...previousPages,
-        currentPage,
+        totalPages > 0 ? currentPage : null,
         ...nextPages,
         ...Array<PaginationItem>(3 - nextPages.length).fill(null),
     ]
@@ -48,37 +48,35 @@ export default function Pagination({
             />
 
             <div className="grid grid-cols-7 items-center text-center">
-                {getPaginationItems(currentPage, totalPages).map((item, index) => (
-                    item === null
-                        ? <span key={`empty-${index}`} aria-hidden="true"/>
-                        : item === '...'
-                        ? (
-                            <span
-                                key={`ellipsis-${index}`}
-                                className="text-(--text-muted)"
-                            >
-                                ...
-                            </span>
-                        )
-                        : (
-                            <button
-                                key={item === currentPage ? 'current-page' : item}
-                                type="button"
-                                aria-current={item === currentPage ? 'page' : undefined}
-                                disabled={loading || totalPages === 0}
-                                onClick={() => onPageChange(item)}
-                                className={`font-bold transition active:text-(--accent-hover) ${
-                                    item === currentPage
-                                        ? 'text-(--accent)'
-                                        : 'text-(--text)'
-                                }`}
-                            >
-                                {item === currentPage
-                                    ? <span key={item} className="motion-safe:animate-[scoreboard-fade-in_220ms_ease-out]">{item}</span>
-                                    : item}
-                            </button>
-                        )
-                ))}
+                {getPaginationItems(currentPage, totalPages).map((item, index) => {
+                    if (item === null) {
+                        return <span key={`empty-${index}`} aria-hidden="true"/>
+                    }
+                    if (item === '...') {
+                        return <span key={`ellipsis-${index}`} aria-hidden="true" className="text-(--text-muted)">...</span>
+                    }
+
+                    const isCurrent = item === currentPage
+                    const disabled = loading || isCurrent
+                    return (
+                        <button
+                            key={item}
+                            type="button"
+                            aria-current={isCurrent ? 'page' : undefined}
+                            aria-disabled={disabled}
+                            onClick={() => {
+                                if (!disabled) onPageChange(item)
+                            }}
+                            className={`rounded font-bold transition focus-visible:outline-2 focus-visible:outline-(--accent)
+                                ${disabled ? 'cursor-default' : 'cursor-pointer hover:text-(--accent-hover) active:text-(--accent-hover)'}
+                                ${isCurrent ? 'text-(--accent)' : 'text-(--text)'}`}
+                        >
+                            {isCurrent
+                                ? <span className="inline-block motion-safe:animate-[scoreboard-fade-in_220ms_ease-out]">{item}</span>
+                                : item}
+                        </button>
+                    )
+                })}
             </div>
 
             <PaginationArrowButton
