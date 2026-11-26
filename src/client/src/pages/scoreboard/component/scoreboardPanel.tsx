@@ -1,39 +1,25 @@
-import {useEffect, useState} from 'react'
 import type {ScoreboardDto} from '@shared/http/dto/scoreboard.dto.ts'
-import {formatPlayerName} from '@client/src/pages/scoreboard/scoreboardNameFormatter.ts'
 import Pagination from '@client/src/pages/scoreboard/component/Pagination.tsx'
 
-const SKELETON_DELAY_MS = 180
+function formatPlayerName(name: string): string {
+    return name.slice(0, 3).toUpperCase()
+}
 
 interface ScoreboardPanelProps {
     scoreboard: ScoreboardDto
-    initialLoading: boolean
     loading: boolean
     error: boolean
     onPageChange: (page: number) => void
+    onRetry: () => void
 }
 
 export default function ScoreboardPanel({
                                             scoreboard,
-                                            initialLoading,
                                             loading,
                                             error,
-                                            onPageChange
+                                            onPageChange,
+                                            onRetry
                                         }: ScoreboardPanelProps) {
-    const [showDelayedSkeleton, setShowDelayedSkeleton] = useState(false)
-
-    useEffect(() => {
-        if (!loading || initialLoading) {
-            setShowDelayedSkeleton(false)
-            return
-        }
-
-        const timer = window.setTimeout(() => setShowDelayedSkeleton(true), SKELETON_DELAY_MS)
-        return () => window.clearTimeout(timer)
-    }, [initialLoading, loading])
-
-    const showSkeleton = initialLoading || (loading && showDelayedSkeleton)
-
     return (
         <div className="flex flex-col gap-5">
             <div
@@ -51,54 +37,42 @@ export default function ScoreboardPanel({
 
                 <div
                     className={`relative flex min-h-0 flex-1 flex-col motion-safe:transition-opacity motion-safe:duration-150
-                        ${loading && !showSkeleton ? 'opacity-75' : 'opacity-100'}`}
+                        ${loading ? 'opacity-75' : 'opacity-100'}`}
                     aria-busy={loading}
                 >
                     <div
-                        key={showSkeleton ? 'skeleton' : scoreboard.currentPage}
-                        className={`grid min-h-0 flex-1
-                            ${initialLoading ? '' : 'motion-safe:animate-[scoreboard-fade-in_220ms_ease-out]'}`}
+                        key={scoreboard.currentPage}
+                        className="grid min-h-0 flex-1 motion-safe:animate-[scoreboard-fade-in_220ms_ease-out]"
                         style={{gridTemplateRows: `repeat(${scoreboard.pageSize}, minmax(0, 1fr))`}}
-                        aria-hidden={showSkeleton || undefined}
                     >
-                        {showSkeleton
-                            ? Array.from({ length: scoreboard.pageSize }).map((_, index) => (
-                                <div
-                                    key={index}
-                                    className="grid grid-cols-[3rem_1fr_auto] items-center border-b
-                                        border-(--border) px-6"
-                                >
-                                    <span className="h-3 w-4 rounded bg-(--border-light) motion-safe:animate-pulse"/>
-                                    <span className="h-4 w-14 rounded bg-(--border-light) motion-safe:animate-pulse"/>
-                                    <span className="h-4 w-12 rounded bg-(--accent-bg) motion-safe:animate-pulse"/>
-                                </div>
-                            ))
-                            : scoreboard.scores.map((score, index) => (
-                                <div
-                                    key={`${score.name}-${score.score}-${index}`}
-                                    className="grid grid-cols-[3rem_1fr_auto] items-center border-b
+                        {scoreboard.scores.map((score, index) => (
+                            <div
+                                key={`${score.name}-${score.score}-${index}`}
+                                className="grid grid-cols-[3rem_1fr_auto] items-center border-b
                                         border-(--border) px-6 transition hover:bg-(--accent-bg)"
-                                >
-                                    <span className="font-mono text-sm text-(--accent-dark)">
-                                        {(scoreboard.currentPage - 1) * scoreboard.pageSize + index + 1}.
-                                    </span>
+                            >
+                                <span className="font-mono text-sm text-(--accent-dark)">
+                                    {(scoreboard.currentPage - 1) * scoreboard.pageSize + index + 1}.
+                                </span>
 
-                                    <span className="whitespace-pre font-mono font-bold tracking-[0.2em] text-(--text-h)">
-                                        {formatPlayerName(score.name)}
-                                    </span>
+                                <span className="whitespace-pre font-mono font-bold tracking-[0.2em] text-(--text-h)">
+                                    {formatPlayerName(score.name)}
+                                </span>
 
-                                    <span className="font-mono font-bold tabular-nums text-(--accent)">
-                                        {score.score.toLocaleString('fr-FR')}
-                                    </span>
-                                </div>
-                            ))
-                        }
+                                <span className="font-mono font-bold tabular-nums text-(--accent)">
+                                    {score.score.toLocaleString('fr-FR')}
+                                </span>
+                            </div>
+                        ))}
                     </div>
                     {error && (
                         <div className="absolute inset-0 grid place-items-center px-6">
-                            <p role="alert" className="rounded-md bg-(--bg-card) px-4 py-3 text-center font-mono text-(--accent)">
-                                Unable to retrieve scores.
-                            </p>
+                            <div className="rounded-md bg-(--bg-card) px-4 py-3 text-center font-mono text-(--accent)">
+                                <p role="alert">Unable to retrieve scores.</p>
+                                <button type="button" className="mt-2 cursor-pointer underline" onClick={onRetry}>
+                                    Retry
+                                </button>
+                            </div>
                         </div>
                     )}
                 </div>

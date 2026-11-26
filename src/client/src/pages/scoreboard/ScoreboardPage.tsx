@@ -1,13 +1,13 @@
 import {useEffect, useState} from 'react'
 
 import {SCOREBOARD_PAGE_SIZE, type ScoreboardDto} from '@shared/http/dto/scoreboard.dto.ts'
-import * as scoreResource from '@client/src/pages/scoreboard/scoreResource.ts'
+import {getScoreboard} from '@client/src/pages/scoreboard/api/scoreResource.ts'
 import ScoreboardPanel from '@client/src/pages/scoreboard/component/scoreboardPanel.tsx'
 
 const EMPTY_SCOREBOARD: ScoreboardDto = {
     scores: [],
     currentPage: 1,
-    totalPages: 1,
+    totalPages: 0,
     pageSize: SCOREBOARD_PAGE_SIZE
 }
 
@@ -15,26 +15,29 @@ export default function ScoreboardPage() {
     const [scoreboard, setScoreboard] = useState<ScoreboardDto | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(false)
-
-    const loadScoreboard = async (page: number) => {
-        setLoading(true)
-        setError(false)
-
-        try {
-            setScoreboard(await scoreResource.getScoreboard(page))
-        } catch {
-            setError(true)
-        } finally {
-            setLoading(false)
-        }
-    }
+    const [request, setRequest] = useState({page: 1})
 
     useEffect(() => {
-        void loadScoreboard(1)
-    }, [])
+        let active = true
+        void getScoreboard(request.page).then(result => {
+            if (!active) return
 
-    const handlePageChange = (page: number) => {
-        void loadScoreboard(page)
+            if (result === null) {
+                setError(true)
+            } else {
+                setScoreboard(result)
+            }
+            setLoading(false)
+        })
+        return () => {
+            active = false
+        }
+    }, [request])
+
+    const loadScoreboard = (page: number) => {
+        setLoading(true)
+        setError(false)
+        setRequest({page})
     }
 
     return (
@@ -53,10 +56,10 @@ export default function ScoreboardPage() {
             <div className="flex flex-row items-center gap-20">
                 <ScoreboardPanel
                     scoreboard={scoreboard ?? EMPTY_SCOREBOARD}
-                    initialLoading={loading && scoreboard === null}
                     loading={loading}
                     error={error}
-                    onPageChange={handlePageChange}
+                    onPageChange={loadScoreboard}
+                    onRetry={() => loadScoreboard(request.page)}
                 />
             </div>
         </section>

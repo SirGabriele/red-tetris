@@ -1,12 +1,12 @@
-import {act, cleanup, fireEvent, render, screen, waitForElementToBeRemoved, within} from '@testing-library/react'
+import {act, cleanup, fireEvent, render, screen, within} from '@testing-library/react'
 import {afterEach, describe, expect, it, vi} from 'vitest'
 
 import ScoreboardPage from '@client/src/pages/scoreboard/ScoreboardPage.tsx'
 import {SCOREBOARD_PAGE_SIZE} from '@shared/http/dto/scoreboard.dto.ts'
-import {BACK_URL} from '@shared/projectConfig.ts'
 
 afterEach(() => {
     cleanup()
+    vi.useRealTimers()
     vi.unstubAllGlobals()
 })
 
@@ -30,16 +30,16 @@ describe('ScoreboardPage', () => {
         render(<ScoreboardPage/>)
 
         expect(await screen.findByText('123')).toBeInTheDocument()
-        expect(fetchScores).toHaveBeenNthCalledWith(1, `${BACK_URL}/scoreboard/1`)
+        expect(fetchScores).toHaveBeenNthCalledWith(1, 'http://localhost:3000/scoreboard/1')
 
+        vi.useFakeTimers()
         fireEvent.click(screen.getByRole('button', {name: 'Next page'}))
+        act(() => vi.advanceTimersByTime(250))
+        vi.useRealTimers()
 
         expect(screen.getByText('123')).toBeInTheDocument()
         expect(screen.getByRole('button', {name: '1', current: 'page'})).toBeInTheDocument()
         expect(screen.getByRole('button', {name: 'Next page'})).toBeDisabled()
-
-        await waitForElementToBeRemoved(screen.getByText('123'))
-        expect(screen.getByRole('button', {name: '1', current: 'page'})).toBeInTheDocument()
 
         await act(async () => {
             resolveSecondPage(Response.json({
@@ -52,12 +52,15 @@ describe('ScoreboardPage', () => {
         expect(await screen.findByText('98')).toBeInTheDocument()
         expect(screen.queryByText('123')).not.toBeInTheDocument()
         expect(screen.getByRole('button', {name: '2', current: 'page'})).toBeInTheDocument()
-        expect(fetchScores).toHaveBeenNthCalledWith(2, `${BACK_URL}/scoreboard/2`)
+        expect(fetchScores).toHaveBeenNthCalledWith(2, 'http://localhost:3000/scoreboard/2')
     })
 
-    it('should keep the scoreboard visible on a failed request and allow a retry', async () => {
+    it.each([
+        () => Promise.resolve(new Response(null, {status: 503})),
+        () => Promise.reject(new TypeError('Network error')),
+    ])('should keep the scoreboard visible on a failed request and allow a retry', async fail => {
         const fetchScores = vi.fn()
-            .mockResolvedValueOnce(new Response(null, {status: 503}))
+            .mockImplementationOnce(fail)
             .mockResolvedValueOnce(Response.json({
                 scores: [{name: 'Jane', score: 123}],
                 currentPage: 1,
@@ -74,7 +77,7 @@ describe('ScoreboardPage', () => {
         expect(await table.findByRole('alert')).toHaveTextContent('Unable to retrieve scores.')
         expect(table.getByText('SCORE')).toBeInTheDocument()
 
-        fireEvent.click(screen.getByRole('button', {name: '1', current: 'page'}))
+        fireEvent.click(table.getByRole('button', {name: 'Retry'}))
 
         expect(await table.findByText('123')).toBeInTheDocument()
         expect(table.queryByRole('alert')).not.toBeInTheDocument()

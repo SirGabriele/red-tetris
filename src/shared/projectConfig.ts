@@ -11,7 +11,7 @@ export const BACK_URL = `${SERVER_BASE_URL}:${SERVER_PORT}` as const;
 export const SCOREBOARD_PATH = '/scoreboard';
 
 export function getScoreboardUrl(page: number): string {
-    return `${SCOREBOARD_PATH}/${page}`;
+    return `${BACK_URL}${SCOREBOARD_PATH}/${page}`;
 }
 
 export const ENABLE_LOG = true;
