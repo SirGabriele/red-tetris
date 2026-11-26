@@ -43,6 +43,16 @@ describe('score database migration', () => {
             .toEqual([{id: 7, player_name: 'Jane', score: 120}])
     })
 
+    it('should create an empty score table on first startup', async () => {
+        database.exec('DROP TABLE score')
+
+        const initialized = await import('@server/database/database.ts')
+
+        expect(initialized.database.prepare('SELECT * FROM score').all()).toEqual([])
+        expect(initialized.database.prepare('PRAGMA table_info(score)').all().map(column => column.name))
+            .toEqual(['id', 'player_name', 'score'])
+    })
+
     it('should roll back and close the database when the migration fails', async () => {
         database.exec('CREATE INDEX score_created_at ON score(created_at)')
         const exec = vi.spyOn(database, 'exec')

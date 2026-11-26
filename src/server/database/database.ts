@@ -6,6 +6,13 @@ export const database = new DatabaseSync(
 
 database.exec('BEGIN IMMEDIATE')
 try {
+    database.exec(`
+        CREATE TABLE IF NOT EXISTS score (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            player_name TEXT NOT NULL,
+            score INTEGER NOT NULL
+        )
+    `)
     const columns = database.prepare('PRAGMA table_info(score)').all()
     if (columns.some(({name}) => name === 'created_at')) {
         database.exec('ALTER TABLE score DROP COLUMN created_at')
