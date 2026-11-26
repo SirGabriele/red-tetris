@@ -6,6 +6,7 @@ import {registerAllHandlers} from "@server/socket/registerAllHandlers.ts";
 import {validateConnection} from "@server/socket/middleware/auth.validation.ts";
 import path from "node:path";
 import {FRONT_URL} from "@shared/projectConfig.ts";
+import {scoreboardController} from "@server/scoreboard/scoreboard.controller.ts";
 
 /**
  * Builds the server and register routes.
@@ -21,10 +22,20 @@ export async function buildServer(options: { enableLogger?: boolean }): Promise<
         }
     });
 
+    server.addHook('onRequest', async (request, reply) => {
+        if (request.method === 'GET') {
+            reply.header('Vary', 'Origin');
+            if (request.headers.origin === FRONT_URL) {
+                reply.header('Access-Control-Allow-Origin', FRONT_URL);
+            }
+        }
+    });
+
     server.register(fastifyStatic, {
         root: path.resolve(import.meta.dirname, '../../client/dist'),
         prefix: '/'
     });
+    server.register(scoreboardController);
 
     const io: RTServer = new Server(server.server, {
         cors: {

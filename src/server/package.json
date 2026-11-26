@@ -16,7 +16,10 @@
   "scripts": {
     "dev": "tsx watch app.ts",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "db:setup": "npm run db:clear",
+    "db:clear": "node database/clear-database.ts",
+    "db:seed": "node database/seed-database.ts"
   },
   "dependencies": {
     "@fastify/static": "^10.1.6",

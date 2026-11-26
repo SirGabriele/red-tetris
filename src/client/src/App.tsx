@@ -2,7 +2,7 @@ import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom'
 import Layout from "@client/src/components/layout/Layout.tsx";
 import HomePage from "@client/src/pages/home/HomePage.tsx";
 import GamePage from "@client/src/pages/game/GamePage.tsx";
-import ScoreboardPage from "@client/src/pages/ScoreboardPage.tsx";
+import ScoreboardPage from "@client/src/pages/scoreboard/ScoreboardPage.tsx";
 import {ROUTES} from "@shared/utils/routesUtils.ts";
 
 

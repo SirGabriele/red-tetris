@@ -7,7 +7,7 @@ export default function HomePage() {
         <section className="mx-auto flex w-full max-w-7xl flex-1 items-center justify-between px-8">
             <div className="flex max-w-xl flex-col items-start">
                 <p className="mb-6 font-mono tracking-[0.25em] text-(--text)">
-                    PIMPLE.&nbsp;RIMLESS.&nbsp;TED.
+                    SIMPLE.&nbsp;TIMELESS.&nbsp;RED.
                 </p>
 
                 <h1>
